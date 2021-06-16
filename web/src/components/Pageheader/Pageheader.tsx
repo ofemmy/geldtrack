@@ -1,6 +1,7 @@
 import { Disclosure } from '@headlessui/react'
 import { MenuIcon, XIcon } from '@heroicons/react/outline'
 import { NavLink, routes } from '@redwoodjs/router'
+import Button from '../Button/Button'
 const Pageheader = () => {
   return (
     <Disclosure as="nav" className="shadow-sm">
@@ -23,6 +24,7 @@ const Pageheader = () => {
                 >
                   Add New Entry
                 </NavLink>
+                <Button color="red">Log out</Button>
                 <div className="flex sm:hidden">
                   <Disclosure.Button>
                     <span className="sr-only">Open main menu</span>
