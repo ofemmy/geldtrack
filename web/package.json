@@ -13,11 +13,25 @@
     ]
   },
   "dependencies": {
+    "@chakra-ui/react": "^1.6.3",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "@fontsource/dm-sans": "^4.4.5",
+    "@fontsource/inter": "^4.4.5",
+    "@fontsource/open-sans": "^4.4.5",
+    "@headlessui/react": "^1.2.0",
+    "@heroicons/react": "^1.0.1",
     "@redwoodjs/forms": "^0.33.3",
     "@redwoodjs/router": "^0.33.3",
     "@redwoodjs/web": "^0.33.3",
+    "framer-motion": "^4",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "autoprefixer": "9.8.6",
+    "postcss-loader": "4.0.2",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat"
   }
 }
