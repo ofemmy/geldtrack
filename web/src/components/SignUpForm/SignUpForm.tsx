@@ -5,14 +5,33 @@ import {
   FieldError,
   EmailField,
   Submit,
+  FormError,
   PasswordField,
 } from '@redwoodjs/forms'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+const schema = z
+  .object({
+    email: z.string().email('Invalid email entered'),
+    password: z.string().min(7, 'Password must not be less than 7 characters'),
+    confirmPassword: z.string(),
+    currency: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  })
 const SignUpForm = () => {
   const onSubmit = (data) => {
     console.log(data)
   }
   return (
-    <Form onSubmit={onSubmit} className="">
+    <Form
+      validation={{ mode: 'onBlur', resolver: zodResolver(schema) }}
+      onSubmit={onSubmit}
+      className=""
+    >
+      <FormError />
       <div className="space-y-8">
         <div>
           <Label
@@ -26,8 +45,7 @@ const SignUpForm = () => {
               name="email"
               className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
               errorClassName="text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500 block w-full rounded-md sm:text-sm border-gray-300"
-              placeHolder="Email address"
-              validation={{ required: true }}
+              placeholder="Email address"
             />
           </div>
           <FieldError name="email" className="mt-2 text-sm text-red-600" />
@@ -44,7 +62,7 @@ const SignUpForm = () => {
               name="password"
               className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
               errorClassName="text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500 block w-full rounded-md sm:text-sm border-gray-300"
-              placeHolder="Password"
+              placeholder="Password"
             />
           </div>
           <FieldError name="password" className="mt-2 text-sm text-red-600" />
@@ -61,7 +79,7 @@ const SignUpForm = () => {
               name="confirmPassword"
               className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
               errorClassName="text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500 block w-full rounded-md sm:text-sm border-gray-300"
-              placeHolder="Confirm Password"
+              placeholder="Confirm Password"
             />
           </div>
         </div>

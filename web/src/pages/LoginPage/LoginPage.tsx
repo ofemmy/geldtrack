@@ -7,7 +7,13 @@ import {
   PasswordField,
 } from '@redwoodjs/forms'
 import { LockClosedIcon } from '@heroicons/react/solid'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+const schema = z.object({
+  email: z.string().email('Invalid email'),
+})
 const LoginPage = () => {
+  //const formMethods = useForm({ resolver: zodResolver(schema) })
   const onSubmit = (data) => console.log(data)
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -22,7 +28,11 @@ const LoginPage = () => {
             Sign in to your account
           </h2>
         </div>
-        <Form onSubmit={onSubmit} className="mt-8 space-y-6">
+        <Form
+          onSubmit={onSubmit}
+          className="mt-8 space-y-6"
+          validation={{ mode: 'onBlur', resolver: zodResolver(schema) }}
+        >
           <input type="hidden" name="remember" defaultValue="true" />
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
@@ -35,7 +45,12 @@ const LoginPage = () => {
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 errorClassName="text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500 block w-full rounded-t-md sm:text-sm border-gray-300"
                 placeholder="Email address"
-                validation={{ required: true }}
+                // validation={{
+                //   validate: (value) => {
+                //     console.log(value)
+                //     return true
+                //   },
+                // }}
               />
               <FieldError name="email" className="mt-2 text-sm text-red-600" />
             </div>
