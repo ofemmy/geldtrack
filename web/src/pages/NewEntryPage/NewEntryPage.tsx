@@ -2,12 +2,23 @@ import { useState } from 'react'
 import { RadioGroup } from '@headlessui/react'
 import Flex from 'src/components/Flex/Flex'
 import { cx } from '../../utils/UtilFunctions'
+import NonRecurringEntryForm from '../../components/NonRecurringEntryForm/NonRecurringEntryForm'
+import RecurringEntryForm from '../../components/RecurringEntryForm/RecurringEntryForm'
 
 const NewEntryPage = () => {
   const [formType, setFormType] = useState('nonRecurring')
   return (
     <>
-      <FormRadioGroup formType={formType} setFormType={setFormType} />
+      <div className="pb-3 border-b border-gray-300 flex justify-end">
+        <FormRadioGroup formType={formType} setFormType={setFormType} />
+      </div>
+      <div className="mt-8">
+        {formType === 'nonRecurring' ? (
+          <NonRecurringEntryForm />
+        ) : (
+          <RecurringEntryForm />
+        )}
+      </div>
     </>
   )
 }
