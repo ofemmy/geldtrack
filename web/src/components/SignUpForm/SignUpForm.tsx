@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   Form,
   Label,
@@ -10,6 +11,8 @@ import {
 } from '@redwoodjs/forms'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useAuth } from '@redwoodjs/auth'
+import { navigate, routes } from '@redwoodjs/router'
 const schema = z
   .object({
     email: z.string().email('Invalid email entered'),
@@ -22,8 +25,13 @@ const schema = z
     path: ['confirmPassword'],
   })
 const SignUpForm = () => {
+  const { signUp } = useAuth()
+  const [error, setError] = useState(null)
   const onSubmit = (data) => {
-    console.log(data)
+    setError(null)
+    signUp({ email: data.email, password: data.password })
+      .then(() => navigate(routes.dashboard()))
+      .catch((error) => setError(error.message))
   }
   return (
     <Form
@@ -31,7 +39,11 @@ const SignUpForm = () => {
       onSubmit={onSubmit}
       className=""
     >
-      <FormError />
+      <FormError
+        error={error}
+        titleClassName="font-semibold"
+        wrapperClassName="bg-red-100 text-red-900 text-sm p-3 rounded"
+      />
       <div className="space-y-8">
         <div>
           <Label
@@ -97,8 +109,9 @@ const SignUpForm = () => {
               errorClassName="text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500 block w-full rounded-md sm:text-sm border-gray-300"
             >
               <option>Please select a currency</option>
-              <option>Hi2</option>
-              <option>Hi3</option>
+              <option>EUR</option>
+              <option>NGN</option>
+              <option>USD</option>
             </SelectField>
           </div>
           <FieldError name="currency" className="mt-2 text-sm text-red-600" />

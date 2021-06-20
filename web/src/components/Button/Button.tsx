@@ -1,8 +1,15 @@
 import { cx } from 'src/utils/UtilFunctions'
-const Button = ({ children, color = '', classes = '', ...props }) => {
+const Button = ({
+  children,
+  color = '',
+  classes = '',
+
+  ...props
+}) => {
   return (
     <button
       type="button"
+      //onClick={onClick}
       {...props}
       className={cx(
         color

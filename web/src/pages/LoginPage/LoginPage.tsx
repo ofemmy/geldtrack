@@ -1,20 +1,34 @@
-import { Link } from '@redwoodjs/router'
+import { useState } from 'react'
 import {
   Form,
   Label,
   EmailField,
   FieldError,
   PasswordField,
+  FormError,
 } from '@redwoodjs/forms'
+import { routes, navigate, Link } from '@redwoodjs/router'
+import { useAuth } from '@redwoodjs/auth'
 import { LockClosedIcon } from '@heroicons/react/solid'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 const schema = z.object({
   email: z.string().email('Invalid email'),
+  password: z.string().nonempty('Password cannot be empty'),
 })
 const LoginPage = () => {
+  const { logIn } = useAuth()
+  const [error, setError] = useState(null)
+  const onSubmit = (data) => {
+    setError(null)
+    logIn({ email: data.email, password: data.password })
+      .then(() => {
+        navigate(routes.dashboard())
+      })
+      .catch((error) => setError(error.message))
+  }
   //const formMethods = useForm({ resolver: zodResolver(schema) })
-  const onSubmit = (data) => console.log(data)
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -33,6 +47,11 @@ const LoginPage = () => {
           className="mt-8 space-y-6"
           validation={{ mode: 'onBlur', resolver: zodResolver(schema) }}
         >
+          <FormError
+            error={error}
+            titleClassName="font-semibold"
+            wrapperClassName="bg-red-100 text-red-900 text-sm p-3 rounded"
+          />
           <input type="hidden" name="remember" defaultValue="true" />
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
