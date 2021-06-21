@@ -7,6 +7,7 @@ import RecurringEntryForm from '../../components/RecurringEntryForm/RecurringEnt
 
 const NewEntryPage = () => {
   const [formType, setFormType] = useState('nonRecurring')
+
   return (
     <>
       <div className="pb-3 border-b border-gray-300 flex justify-end">

@@ -18,5 +18,32 @@ model User {
   categories Json?    @db.JsonB
   createdAt  DateTime @default(now())
 
+  entries Entry[]
   @@map("users")
+}
+
+model Entry {
+  id            Int            @id @default(autoincrement())
+  title         String
+  amount        Decimal        @db.Decimal
+  type          EntryType
+  frequency     EntryFrequency
+  entryDate     DateTime       @db.Timestamptz
+  category      String
+  recurringFrom DateTime?
+  recurringTo   DateTime?
+  user          User           @relation(fields: [userId], references: [id])
+  userId        String         @db.Uuid
+
+  @@map("entries")
+}
+
+enum EntryType {
+  Income
+  Expense
+}
+
+enum EntryFrequency {
+  NonRecurring
+  Recurring
 }
