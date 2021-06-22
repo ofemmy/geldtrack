@@ -40,7 +40,7 @@ export const Success = ({
   return (
     <ul>
       {entries.map((item) => {
-        return <li key={item.title}>{JSON.stringify(item)}</li>
+        return <li key={item.id}>{JSON.stringify(item)}</li>
       })}
     </ul>
   )

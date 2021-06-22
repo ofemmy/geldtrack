@@ -2,6 +2,7 @@ import { NavLink, routes } from '@redwoodjs/router'
 import { upperFirst } from 'lodash'
 import Pageheader from 'src/components/Pageheader/Pageheader'
 import Flex from 'src/components/Flex/Flex'
+import { DateProvider } from 'src/utils/hooks/useDate'
 type AppLayoutProps = {
   children: React.ReactNode
 }
@@ -38,7 +39,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           <main className="flex-1 relative overflow-y-auto focus:outline-none">
             <div className="py-6">
               <main className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-                {children}
+                <DateProvider>{children}</DateProvider>
               </main>
             </div>
           </main>

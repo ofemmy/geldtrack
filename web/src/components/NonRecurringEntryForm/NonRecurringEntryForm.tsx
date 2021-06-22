@@ -17,7 +17,7 @@ import { z } from 'zod'
 import { useAuth } from '@redwoodjs/auth'
 import { useForm } from 'react-hook-form'
 import getSymbolFromCurrency from 'currency-symbol-map'
-import { extractCategories } from 'src/utils/UtilFunctions'
+import { convertToLuxonDate, extractCategories } from 'src/utils/UtilFunctions'
 import { CREATE_ENTRY, GET_USER_PROFILE } from 'src/utils/graphql'
 const schema = z
   .object({
@@ -70,6 +70,7 @@ const NonRecurringEntryForm = () => {
     },
   })
   const submitHandler = (data) => {
+    data.entryDate = convertToLuxonDate(data.entryDate)
     create({
       variables: {
         input: {

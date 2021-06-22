@@ -17,7 +17,7 @@ import { useForm } from 'react-hook-form'
 import { toast, Toaster } from '@redwoodjs/web/toast'
 import { useMutation, useQuery } from '@redwoodjs/web'
 import getSymbolFromCurrency from 'currency-symbol-map'
-import { extractCategories } from 'src/utils/UtilFunctions'
+import { convertToLuxonDate, extractCategories } from 'src/utils/UtilFunctions'
 import { CREATE_ENTRY, GET_USER_PROFILE } from 'src/utils/graphql'
 const schema = z.object({
   title: z.string().nonempty('Title cannot be empty'),
@@ -51,6 +51,9 @@ const RecurringEntryForm = () => {
     },
   })
   const submitHandler = (data) => {
+    data.entryDate = convertToLuxonDate(data.entryDate)
+    data.recurringFrom = convertToLuxonDate(data.recurringFrom)
+    data.recurringTo = convertToLuxonDate(data.recurringTo)
     create({
       variables: {
         input: {
