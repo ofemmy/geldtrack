@@ -3099,7 +3099,7 @@
     youch "2.2.2"
     youch-terminal "1.1.1"
 
-"@redwoodjs/api@^0.34.1":
+"@redwoodjs/api@^0.34.0":
   version "0.34.1"
   resolved "https://registry.yarnpkg.com/@redwoodjs/api/-/api-0.34.1.tgz#f93af36fa529335516e127b6f78eb04c79e3ba86"
   integrity sha512-VO8IB5fo60a5iat1B1Le4PruXsf6yXwuTfgrI4oInfXguJUNy/0YVMtCoFignlgL+KmogsZVD9FxpABvNkuYRA==
@@ -15543,6 +15543,11 @@ react-syntax-highlighter@^13.5.0, react-syntax-highlighter@^13.5.3:
     lowlight "^1.14.0"
     prismjs "^1.21.0"
     refractor "^3.1.0"
+
+react-table@^7.7.0:
+  version "7.7.0"
+  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.7.0.tgz#e2ce14d7fe3a559f7444e9ecfe8231ea8373f912"
+  integrity sha512-jBlj70iBwOTvvImsU9t01LjFjy4sXEtclBovl3mTiqjz23Reu0DKnRza4zlLtOPACx6j2/7MrQIthIK1Wi+LIA==
 
 react-textarea-autosize@^8.1.1, react-textarea-autosize@^8.3.0:
   version "8.3.3"

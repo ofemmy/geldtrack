@@ -58,16 +58,18 @@ const NonRecurringEntryForm = () => {
   const {
     loading: l,
     error: err,
-    data: d,
+    data: userData,
   } = useQuery(GET_USER_PROFILE, { variables: { id: currentUser.sub } })
-
-  const user = d?.user
+  const user = userData?.user
   const userCategoryNames = user ? extractCategories(user) : []
   const [create, { loading, error }] = useMutation(CREATE_ENTRY, {
     onCompleted: () => {
       toast.success('New Entry Created')
       formMethods.reset()
     },
+    refetchQueries: [
+      { query: GET_USER_PROFILE, variables: { id: currentUser.sub } },
+    ],
   })
   const submitHandler = (data) => {
     data.entryDate = convertToLuxonDate(data.entryDate)
@@ -211,6 +213,7 @@ const NonRecurringEntryForm = () => {
           </div>
         </div>
       </Form>
+      {JSON.stringify(user?.categories, null, 2)}
     </>
   )
 }

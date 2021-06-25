@@ -1,8 +1,9 @@
 import { CreditCardIcon, LibraryIcon } from '@heroicons/react/outline'
 import { numberToCurrency } from 'src/utils/UtilFunctions'
-const SummaryBoard = () => {
-  const totalIncome = 3000
-  const totalExpense = 3400
+const SummaryBoard = ({ totalEntryData }) => {
+  const { totalIncome, totalExpense } = totalEntryData
+  // const totalIncome = 3000
+  // const totalExpense = 3400
   const currency = 'EUR'
   return (
     <div className="bg-white shadow-sm border  border-gray-100 rounded-md p-4">

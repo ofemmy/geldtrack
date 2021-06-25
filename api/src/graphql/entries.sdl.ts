@@ -20,6 +20,10 @@ export const schema = gql`
     createdAt: DateTime!
     entries: [Entry]!
   }
+  type EntryTotal {
+    totalIncome: Float!
+    totalExpense: Float!
+  }
   enum EntryType {
     Income
     Expense
@@ -30,8 +34,10 @@ export const schema = gql`
   }
 
   type Query {
-    entries: [Entry!]!
+    recentEntries(userId: String): [Entry]
+    entries(userId: String!, month: Int): [Entry!]!
     entriesForUser(userId: String!): [Entry]
+    getEntriesTotal(userId: String!, month: Int): EntryTotal!
   }
 
   input CreateEntryInput {

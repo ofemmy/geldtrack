@@ -1,13 +1,13 @@
 //import { Link, routes } from '@redwoodjs/router'
 import { useAuth } from '@redwoodjs/auth'
 import EntriesCell from 'src/components/EntriesCell'
-import DashboardChart from 'src/components/DashboardChart/DashboardChart'
-import SummaryBoard from 'src/components/SummaryBoard/SummaryBoard'
+
 import { Info } from 'luxon'
 import { useDate } from 'src/utils/hooks/useDate'
 import MonthPicker from 'src/components/MonthPicker/MonthPicker'
 const DashboardPage = () => {
   const { currentUser } = useAuth()
+  console.log(currentUser)
   const { currentMonth } = useDate()
   return (
     <div className="space-y-6">
@@ -18,11 +18,8 @@ const DashboardPage = () => {
 
         <MonthPicker />
       </div>
-      <div className="h-96 relative bg-gray-50 rounded-sm">
-        <DashboardChart />
-      </div>
-      <SummaryBoard />
-      <EntriesCell userId={currentUser.sub} />
+
+      <EntriesCell userId={currentUser.sub} month={currentMonth} />
     </div>
   )
 }

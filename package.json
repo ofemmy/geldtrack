@@ -17,5 +17,8 @@
   "engines": {
     "node": "14.x",
     "yarn": "1.x"
+  },
+  "dependencies": {
+    "luxon": "^1.27.0"
   }
 }

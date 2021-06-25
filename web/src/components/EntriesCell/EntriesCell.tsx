@@ -1,32 +1,29 @@
-import type { UserWithEntries } from 'types/graphql'
+import type { EntriesQuery } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
-import LoadingComponent from 'src/components/LoadingComponent/LoadingComponent'
-
-// export const QUERY = gql`
-//   query EntriesQuery {
-//     entries {
-//       id
-//       title
-//     }
-//   }
-// `
+import DashboardChart from 'src/components/DashboardChart/DashboardChart'
+import SummaryBoard from 'src/components/SummaryBoard/SummaryBoard'
+import DataTable from '../DataTable/DataTable'
 export const QUERY = gql`
-  query UserWithEntries($userId: String!) {
-    user(id: $userId) {
+  query EntriesQuery($userId: String!, $month: Int) {
+    recentEntries(userId: $userId) {
       id
-      currency
-      entries {
-        title
-        id
-      }
+      title
+      amount
+      category
+      frequency
+      entryDate
+      type
+      recurringFrom
+      recurringTo
+    }
+    getEntriesTotal(userId: $userId, month: $month) {
+      totalIncome
+      totalExpense
     }
   }
 `
-export const Loading = () => (
-  <div className="h-screen relative">
-    <LoadingComponent />
-  </div>
-)
+
+export const Loading = () => <div>Loading...</div>
 
 export const Empty = () => <div>Empty</div>
 
@@ -35,13 +32,22 @@ export const Failure = ({ error }: CellFailureProps) => (
 )
 
 export const Success = ({
-  user: { entries },
-}: CellSuccessProps<UserWithEntries>) => {
+  recentEntries: entries,
+  getEntriesTotal,
+}: CellSuccessProps<EntriesQuery>) => {
+  console.log(getEntriesTotal)
   return (
-    <ul>
-      {entries.map((item) => {
-        return <li key={item.id}>{JSON.stringify(item)}</li>
-      })}
-    </ul>
+    <div className="space-y-4">
+      <div className="h-96 relative bg-gray-50 rounded-sm">
+        <DashboardChart />
+      </div>
+      <SummaryBoard totalEntryData={getEntriesTotal} />
+      <DataTable data={entries} />
+      {/* <ul>
+        {entries.map((item) => {
+          return <li key={item.id}>{JSON.stringify(item)}</li>
+        })}
+      </ul> */}
+    </div>
   )
 }
