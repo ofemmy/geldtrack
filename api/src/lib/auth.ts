@@ -1,5 +1,5 @@
 import { AuthenticationError, ForbiddenError, parseJWT } from '@redwoodjs/api'
-
+import { db } from 'src/lib/db'
 /**
  * getCurrentUser returns the user information together with
  * an optional collection of roles used by requireAuth() to check
@@ -17,7 +17,13 @@ export const getCurrentUser = async (
   { _token, _type },
   { _event, _context }
 ) => {
-  return { ...decoded, roles: parseJWT({ decoded }).roles }
+  const userProfile = await db.user.findUnique({ where: { id: decoded.sub } })
+  const { currency, categories } = userProfile
+  return {
+    ...decoded,
+    roles: parseJWT({ decoded }).roles,
+    profile: { currency, categories },
+  }
 }
 
 /**

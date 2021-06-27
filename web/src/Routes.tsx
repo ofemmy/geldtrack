@@ -22,6 +22,7 @@ const Routes = () => {
           <Route path="/incomes" page={IncomesPage} name="incomes" />
           <Route path="/expenses" page={ExpensesPage} name="expenses" />
           <Route path="/recurrings" page={RecurringsPage} name="recurrings" />
+          <Route path="/budget" page={BudgetPage} name="budget" />
         </Set>
       </Private>
       <Route notfound page={NotFoundPage} />

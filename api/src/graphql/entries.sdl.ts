@@ -32,7 +32,13 @@ export const schema = gql`
     NonRecurring
     Recurring
   }
-
+  type Category {
+    name: String!
+    monthlyBudget: Float!
+    used: Float!
+    runningBudget: Float!
+    rollOver: Boolean!
+  }
   type Query {
     recentEntries(userId: String): [Entry]
     entries(userId: String!, month: Int): [Entry!]!
@@ -51,7 +57,11 @@ export const schema = gql`
     recurringTo: DateTime
     userId: String!
   }
-
+  input CreateCategoryInput {
+    type: String!
+    name: String!
+    userId: String!
+  }
   input UpdateEntryInput {
     title: String
     amount: Float
@@ -65,5 +75,6 @@ export const schema = gql`
   }
   type Mutation {
     createEntry(input: CreateEntryInput!): Entry
+    createCategory(input: CreateCategoryInput!): Category
   }
 `

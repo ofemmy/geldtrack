@@ -5,6 +5,7 @@ import { requireAuth } from 'src/lib/auth'
 import { BeforeResolverSpecType } from '@redwoodjs/api'
 import { fetchEntryTotal } from 'src/lib/queries/fetchEntriesTotal'
 import { budgetHandler, createDate, OPERATION } from 'src/lib/utils'
+import { upperFirst } from 'lodash'
 
 // type QueryOptions = {
 //   userId: number
@@ -65,5 +66,32 @@ export const createEntry = async ({ input }) => {
     data: { categories: newCategories },
   })
   return newEntry
+}
+export const createCategory = async ({ input }) => {
+  requireAuth()
+  const { type, name, userId } = input
+  const categoryData = {
+    name: upperFirst(name),
+    type: upperFirst(type),
+    monthlyBudget: 0,
+    rollOver: false,
+    used: 0,
+    runningBudget: 0,
+  }
+  const newCategory = {
+    [name.toLowerCase()]: categoryData,
+  }
+  const userCategories = (
+    await await db.user.findUnique({
+      where: { id: userId },
+    })
+  ).categories as Prisma.JsonObject
+
+  const newCategories = { ...userCategories, ...newCategory }
+  await db.user.update({
+    where: { id: userId },
+    data: { categories: newCategories },
+  })
+  return categoryData
 }
 //export const fetchIncomes = (queryOptions: QueryOptions) => {}

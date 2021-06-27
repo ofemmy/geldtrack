@@ -10,6 +10,7 @@ import {
   Submit,
   FormError,
 } from '@redwoodjs/forms'
+import { useDisclosure } from '@chakra-ui/hooks'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useAuth } from '@redwoodjs/auth'
@@ -19,6 +20,7 @@ import { useMutation, useQuery } from '@redwoodjs/web'
 import getSymbolFromCurrency from 'currency-symbol-map'
 import { convertToLuxonDate, extractCategories } from 'src/utils/UtilFunctions'
 import { CREATE_ENTRY, GET_USER_PROFILE } from 'src/utils/graphql'
+import CategoryModal from 'src/components/CategoryModal/CategoryModal'
 const schema = z.object({
   title: z.string().nonempty('Title cannot be empty'),
   amount: z
@@ -37,12 +39,13 @@ const RecurringEntryForm = () => {
   const formMethods = useForm()
   const { currentUser } = useAuth()
   const {
-    loading: l,
-    error: err,
-    data: d,
+    loading: profileLoading,
+    error: profileError,
+    data: userData,
+    refetch,
   } = useQuery(GET_USER_PROFILE, { variables: { id: currentUser.sub } })
 
-  const user = d?.user
+  const user = userData?.user
   const userCategoryNames = user ? extractCategories(user) : []
   const [create, { loading, error }] = useMutation(CREATE_ENTRY, {
     onCompleted: () => {
@@ -64,10 +67,16 @@ const RecurringEntryForm = () => {
       },
     })
   }
-
+  const { isOpen, onClose, onOpen } = useDisclosure()
   return (
     <>
       <Toaster />
+      <CategoryModal
+        isOpen={isOpen}
+        onClose={onClose}
+        userId={currentUser.sub}
+        refetch={refetch}
+      />
       <Form
         onSubmit={submitHandler}
         validation={{ resolver: zodResolver(schema) }}
@@ -196,21 +205,30 @@ const RecurringEntryForm = () => {
             </div>
           </div>
           <div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-4">
               <Label
                 name="category"
                 className="block text-sm font-medium text-blue-900"
               >
                 Category
               </Label>
-              {l && <span className="text-xs text-blue-300">Loading....</span>}
-              {err && (
+              <button
+                type="button"
+                onClick={onOpen}
+                className="text-xs text-yellow-500 inline-flex items-center px-1.5 py-1 border border-transparent font-medium rounded  bg-yellow-100 hover:bg-yellow-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+              >
+                Add Category
+              </button>
+              {profileLoading && (
+                <span className="text-xs text-blue-500">Loading...</span>
+              )}
+              {profileError && (
                 <span className="text-xs text-red-500">
-                  Error fetching user data, please reload the page
+                  Error loading data please reload page...
                 </span>
               )}
             </div>
-            <div className="mt-1">
+            <div className="mt-2">
               <SelectField
                 name="category"
                 className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"

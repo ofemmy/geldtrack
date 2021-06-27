@@ -15,3 +15,10 @@ export const GET_USER_PROFILE = gql`
     }
   }
 `
+export const CREATE_CATEGORY = gql`
+  mutation CreateCategoryMutation($input: CreateCategoryInput!) {
+    createCategory(input: $input) {
+      name
+    }
+  }
+`
