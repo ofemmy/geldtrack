@@ -22,3 +22,10 @@ export const CREATE_CATEGORY = gql`
     }
   }
 `
+export const CREATE_BUDGET = gql`
+  mutation CreateBudgetMutation($input: CreateBudgetInput!) {
+    createBudget(input: $input) {
+      name
+    }
+  }
+`

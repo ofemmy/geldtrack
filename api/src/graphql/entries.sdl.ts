@@ -39,6 +39,7 @@ export const schema = gql`
     runningBudget: Float!
     rollOver: Boolean!
   }
+
   type Query {
     recentEntries(userId: String): [Entry]
     entries(userId: String!, month: Int): [Entry!]!
@@ -62,6 +63,13 @@ export const schema = gql`
     name: String!
     userId: String!
   }
+  input CreateBudgetInput {
+    userId: String!
+    category: String!
+    monthlyBudget: Float!
+    rollOver: Boolean!
+  }
+
   input UpdateEntryInput {
     title: String
     amount: Float
@@ -76,5 +84,6 @@ export const schema = gql`
   type Mutation {
     createEntry(input: CreateEntryInput!): Entry
     createCategory(input: CreateCategoryInput!): Category
+    createBudget(input: CreateBudgetInput!): Category
   }
 `
