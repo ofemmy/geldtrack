@@ -71,6 +71,35 @@ export const createEntry = async ({ input }) => {
   })
   return newEntry
 }
+export const updateEntry = async ({ input }) => {
+  //using the delete and create new method for updating
+  requireAuth()
+  const { userId, id } = input
+
+  const oldEntry = await db.entry.delete({ where: { id: Number(id) } })
+  const userCategories = (
+    await await db.user.findUnique({
+      where: { id: userId },
+    })
+  ).categories as any
+  const intermediaryCategories = budgetHandler({
+    userCategories,
+    entryItem: oldEntry,
+    operation: OPERATION.delete,
+  })
+  const { id: _, ...entryData } = input
+  const updatedEntry = await db.entry.create({ data: entryData })
+  const finalCategories = budgetHandler({
+    userCategories: intermediaryCategories,
+    entryItem: updatedEntry,
+    operation: OPERATION.create,
+  })
+  await db.user.update({
+    where: { id: userId },
+    data: { categories: finalCategories },
+  })
+  return input
+}
 export const createCategory = async ({ input }) => {
   requireAuth()
   const { type, name, userId } = input
@@ -123,4 +152,5 @@ export const createBudget = async ({ input }) => {
   })
   return newBudget
 }
+
 //export const fetchIncomes = (queryOptions: QueryOptions) => {}

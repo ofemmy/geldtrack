@@ -20,7 +20,7 @@ import { useAuth } from '@redwoodjs/auth'
 import { useForm } from 'react-hook-form'
 import getSymbolFromCurrency from 'currency-symbol-map'
 import { convertToLuxonDate, extractCategories } from 'src/utils/UtilFunctions'
-import { CREATE_ENTRY, GET_USER_PROFILE } from 'src/utils/graphql'
+import { CREATE_ENTRY, GET_USER_PROFILE, UPDATE_ENTRY } from 'src/utils/graphql'
 import CategoryModal from 'src/components/CategoryModal/CategoryModal'
 //import { DateTime } from 'luxon'
 import AppDatePicker from 'src/components/AppDatePicker/AppDatePicker'
@@ -97,22 +97,43 @@ const NonRecurringEntryForm = ({ mode = 'create', entry = null }) => {
       { query: GET_USER_PROFILE, variables: { id: currentUser.sub } },
     ],
   })
+  const [update, { loading: updateLoading, error: updateError }] = useMutation(
+    UPDATE_ENTRY,
+    {
+      onCompleted: () => {
+        toast.success('Entry Updated')
+        window.location.reload()
+      },
+      refetchQueries: [
+        { query: GET_USER_PROFILE, variables: { id: currentUser.sub } },
+      ],
+    }
+  )
   const submitHandler = (data) => {
     data.entryDate = convertToLuxonDate(data.entryDate)
     if (mode === 'edit') {
-      // formMethods.setValue('test', 'Oladayo')
-      console.log(data)
-      return
-    }
-    create({
-      variables: {
-        input: {
-          ...data,
-          frequency: 'NonRecurring',
-          userId: currentUser.sub,
+      const { __typename, ...rest } = data
+      update({
+        variables: {
+          input: {
+            ...rest,
+            frequency: 'NonRecurring',
+            userId: currentUser.sub,
+            id: entry?.id,
+          },
         },
-      },
-    })
+      })
+    } else {
+      create({
+        variables: {
+          input: {
+            ...data,
+            frequency: 'NonRecurring',
+            userId: currentUser.sub,
+          },
+        },
+      })
+    }
   }
   const { isOpen, onClose, onOpen } = useDisclosure()
   return (
@@ -129,7 +150,7 @@ const NonRecurringEntryForm = ({ mode = 'create', entry = null }) => {
         //validation={{ resolver: zodResolver(schema) }}
         formMethods={formMethods}
       >
-        <FormError error={error} />
+        <FormError error={error || updateError} />
         <div className="space-y-8">
           <div>
             <div className="space-x-4 flex">
@@ -250,7 +271,7 @@ const NonRecurringEntryForm = ({ mode = 'create', entry = null }) => {
           </div>
           <div className="flex justify-end">
             <Submit
-              disabled={loading}
+              disabled={loading || updateLoading}
               className="flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 pb-4"
             >
               {mode === 'create' ? 'Create Entry' : 'Update Entry'}

@@ -7,6 +7,7 @@ export const createDate = ({ month }) => {
 export enum OPERATION {
   create,
   update,
+  delete,
 }
 type Category = {
   [index: string]: {
@@ -40,6 +41,15 @@ export const budgetHandler = ({
     const amount = entryItem.amount.toNumber()
     category.used += amount
     category.runningBudget -= amount
+    newCategories = {
+      ...userCategories,
+      [category.name.toLowerCase()]: category,
+    }
+  }
+  if (operation === OPERATION.delete) {
+    const amount = entryItem.amount.toNumber()
+    category.used -= amount
+    category.runningBudget += amount
     newCategories = {
       ...userCategories,
       [category.name.toLowerCase()]: category,

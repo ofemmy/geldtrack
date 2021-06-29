@@ -6,12 +6,35 @@ export const CREATE_ENTRY = gql`
     }
   }
 `
+export const UPDATE_ENTRY = gql`
+  mutation UpdateEntryMutation($input: UpdateEntryInput!) {
+    updateEntry(input: $input) {
+      id
+      title
+    }
+  }
+`
 export const GET_USER_PROFILE = gql`
   query GetUserProfile($id: String!) {
     user(id: $id) {
       id
       currency
       categories
+    }
+  }
+`
+export const GET_RECENT_ENTRIES = gql`
+  query EntriesQuery($userId: String!) {
+    recentEntries(userId: $userId) {
+      id
+      title
+      amount
+      category
+      frequency
+      entryDate
+      type
+      recurringFrom
+      recurringTo
     }
   }
 `

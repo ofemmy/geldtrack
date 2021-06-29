@@ -71,6 +71,7 @@ export const schema = gql`
   }
 
   input UpdateEntryInput {
+    id: ID!
     title: String
     amount: Float
     type: EntryType
@@ -85,5 +86,6 @@ export const schema = gql`
     createEntry(input: CreateEntryInput!): Entry
     createCategory(input: CreateCategoryInput!): Category
     createBudget(input: CreateBudgetInput!): Category
+    updateEntry(input: UpdateEntryInput!): Entry
   }
 `
