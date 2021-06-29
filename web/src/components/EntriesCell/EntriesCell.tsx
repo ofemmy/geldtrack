@@ -35,7 +35,6 @@ export const Success = ({
   recentEntries: entries,
   getEntriesTotal,
 }: CellSuccessProps<EntriesQuery>) => {
-  console.log(getEntriesTotal)
   return (
     <div className="space-y-4">
       <div className="h-96 relative bg-gray-50 rounded-sm">

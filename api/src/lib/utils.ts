@@ -31,11 +31,11 @@ export const budgetHandler = ({
   if (entryItem.type === 'Income') {
     //early return, don't do anything with the input
     newCategories = userCategories
+    return newCategories
   }
   //get the category in question
   const category = userCategories[entryItem.category.toLowerCase()]
-  //temporaryhack TODO:REMOVE LATER
-  category['used'] = category.used || 0
+
   if (operation === OPERATION.create) {
     const amount = entryItem.amount.toNumber()
     category.used += amount

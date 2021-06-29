@@ -16,11 +16,12 @@ import { upperFirst } from 'lodash'
 // }
 // Used when the environment variable REDWOOD_SECURE_SERVICES=1
 export const beforeResolver = (rules: BeforeResolverSpecType) => {
-  rules.add(requireAuth)
+  //rules.add(requireAuth)
   rules.skip() //remove later
 }
 
 export const entries = ({ userId }) => {
+  requireAuth()
   return db.entry.findMany({
     where: { userId },
     orderBy: { entryDate: 'desc' },
@@ -28,6 +29,7 @@ export const entries = ({ userId }) => {
   })
 }
 export const recentEntries = ({ userId }) => {
+  requireAuth()
   return db.entry.findMany({
     where: { userId },
     orderBy: { entryDate: 'desc' },
@@ -35,9 +37,11 @@ export const recentEntries = ({ userId }) => {
   })
 }
 export const getEntriesTotal = ({ userId, month }) => {
+  requireAuth()
   return fetchEntryTotal({ userId, date: createDate({ month }) })
 }
 export const entriesForUser = ({ userId }) => {
+  requireAuth()
   return db.entry.findMany({
     where: { userId },
     orderBy: { entryDate: 'desc' },

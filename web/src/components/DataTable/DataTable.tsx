@@ -1,9 +1,14 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useTable, usePagination } from 'react-table'
+import { useDisclosure } from '@chakra-ui/hooks'
 import { cx, numberToCurrency } from 'src/utils/UtilFunctions'
-import { EntryType } from '@prisma/client'
+import { EntryFrequency, EntryType } from '@prisma/client'
 import { PencilAltIcon, TrashIcon, CashIcon } from '@heroicons/react/outline'
 import { DateTime } from 'luxon'
+import AppModal from '../AppModal/AppModal'
+import NonRecurringEntryForm from 'src/components/NonRecurringEntryForm/NonRecurringEntryForm'
+import RecurringEntryForm from 'src/components/RecurringEntryForm/RecurringEntryForm'
+
 const DataTable = ({ data, dataPerPage = 10 }) => {
   const tableData = useMemo(() => data, [data])
   const currency = 'EUR'
@@ -65,8 +70,26 @@ const DataTable = ({ data, dataPerPage = 10 }) => {
     },
     usePagination
   )
+  const [formType, setFormType] = useState(EntryFrequency.NonRecurring)
+  const [entryToEdit, setEntryToEdit] = useState(null)
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const editHandler = (entry) => {
+    setFormType(entry.frequency)
+    setEntryToEdit(entry)
+    onOpen()
+  }
+  const deleteHandler = (entry) => {
+    console.log(entry)
+  }
   return (
     <>
+      <AppModal onClose={onClose} isOpen={isOpen} title="Edit Entry">
+        {formType === EntryFrequency.NonRecurring ? (
+          <NonRecurringEntryForm mode="edit" entry={entryToEdit} />
+        ) : (
+          <RecurringEntryForm mode="edit" entry={entryToEdit} />
+        )}
+      </AppModal>
       <div className="shadow sm:hidden">
         <ul className="mt-2 divide-y divide-gray-200 overflow-hidden shadow sm:hidden">
           {tableData.map((entry) => (
@@ -187,10 +210,19 @@ const DataTable = ({ data, dataPerPage = 10 }) => {
                         )
                       })}
                       <td className="px-6 py-4 whitespace-nowrap flex justify-center items-center space-x-2">
-                        <button onClick={() => {}} className="text-yellow-500">
+                        <button
+                          onClick={() => {
+                            editHandler(row.original)
+                          }}
+                          className="text-yellow-500"
+                        >
                           <PencilAltIcon className="h-4 w-4" />
                         </button>
-                        <button onClick={() => {}}>
+                        <button
+                          onClick={() => {
+                            deleteHandler(row.original)
+                          }}
+                        >
                           <TrashIcon className="text-red-500 w-4 h-4" />
                         </button>
                       </td>
@@ -244,5 +276,4 @@ const DataTable = ({ data, dataPerPage = 10 }) => {
     </>
   )
 }
-
 export default DataTable

@@ -2,7 +2,6 @@ import {
   Form,
   Label,
   SelectField,
-  DateField,
   NumberField,
   RadioField,
   FieldError,
@@ -20,6 +19,7 @@ import { useMutation, useQuery } from '@redwoodjs/web'
 import getSymbolFromCurrency from 'currency-symbol-map'
 import { convertToLuxonDate, extractCategories } from 'src/utils/UtilFunctions'
 import { CREATE_ENTRY, GET_USER_PROFILE } from 'src/utils/graphql'
+import AppDatePicker from 'src/components/AppDatePicker/AppDatePicker'
 import CategoryModal from 'src/components/CategoryModal/CategoryModal'
 const schema = z.object({
   title: z.string().nonempty('Title cannot be empty'),
@@ -35,8 +35,31 @@ const schema = z.object({
   recurringTo: z.string().nonempty('No recurring to date selected'),
   type: z.string().nonempty('No entry type chosen'),
 })
-const RecurringEntryForm = () => {
-  const formMethods = useForm()
+const RecurringEntryForm = ({ mode = 'create', entry = null }) => {
+  const initialValues =
+    mode === 'create'
+      ? {
+          title: '',
+          type: 'Expense',
+          amount: 0,
+          entryDate: '',
+          category: '',
+          recurringFrom: '',
+          recurringTo: '',
+        }
+      : {
+          title: entry.title,
+          type: entry.type,
+          amount: entry.amount,
+          entryDate: entry.entryDate,
+          category: entry.category,
+          recurringFrom: entry.recurringFrom,
+          recurringTo: entry.recurringTo,
+        }
+  const formMethods = useForm({
+    defaultValues: initialValues,
+    resolver: zodResolver(schema),
+  })
   const { currentUser } = useAuth()
   const {
     loading: profileLoading,
@@ -77,23 +100,19 @@ const RecurringEntryForm = () => {
         userId={currentUser.sub}
         refetch={refetch}
       />
-      <Form
-        onSubmit={submitHandler}
-        validation={{ resolver: zodResolver(schema) }}
-        formMethods={formMethods}
-      >
+      <Form onSubmit={submitHandler} formMethods={formMethods}>
         <FormError error={error} />
         <div className="space-y-8">
           <div>
             <div className="space-x-4 flex">
               <div className="space-x-2">
-                <RadioField name="type" value=" Income" />
+                <RadioField name="type" value=" Income" id="Income" />
                 <Label className="text-md font-medium text-blue-900">
                   Income
                 </Label>
               </div>
               <div className="space-x-2">
-                <RadioField name="type" value="Expense" />
+                <RadioField name="type" value="Expense" id="Expense" />
                 <Label className="text-md font-medium text-blue-900">
                   Expenses
                 </Label>
@@ -150,11 +169,9 @@ const RecurringEntryForm = () => {
               Entry Date
             </Label>
             <div className="mt-1">
-              <DateField
-                name="entryDate"
-                className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                errorClassName="text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500 block w-full rounded-md sm:text-sm border-red-300"
-                placeholder="DD.MM.YYYY"
+              <AppDatePicker
+                inputName="entryDate"
+                defaultDate={entry?.entryDate}
               />
             </div>
             <FieldError
@@ -171,11 +188,9 @@ const RecurringEntryForm = () => {
                 Recurring From
               </Label>
               <div className="mt-1">
-                <DateField
-                  name="recurringFrom"
-                  className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                  errorClassName="text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500 block w-full rounded-md sm:text-sm border-red-300"
-                  placeholder="DD.MM.YYYY"
+                <AppDatePicker
+                  inputName="recurringFrom"
+                  defaultDate={entry?.recurringFrom}
                 />
               </div>
               <FieldError
@@ -191,11 +206,9 @@ const RecurringEntryForm = () => {
                 Recurring To
               </Label>
               <div className="mt-1">
-                <DateField
-                  name="recurringTo"
-                  className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                  errorClassName="text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500 block w-full rounded-md sm:text-sm border-red-300"
-                  placeholder="DD.MM.YYYY"
+                <AppDatePicker
+                  inputName="recurringTo"
+                  defaultDate={entry?.recurringTo}
                 />
               </div>
               <FieldError
@@ -247,7 +260,7 @@ const RecurringEntryForm = () => {
               disabled={loading}
               className="flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Create Entry
+              {mode === 'create' ? 'Create Entry' : 'Update Entry'}
             </Submit>
           </div>
         </div>

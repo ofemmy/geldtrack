@@ -1,8 +1,8 @@
+//import { useEffect } from 'react'
 import {
   Form,
   Label,
   SelectField,
-  DateField,
   NumberField,
   RadioField,
   FieldError,
@@ -10,6 +10,7 @@ import {
   Submit,
   FormError,
 } from '@redwoodjs/forms'
+
 import { useDisclosure } from '@chakra-ui/react'
 import { toast, Toaster } from '@redwoodjs/web/toast'
 import { useMutation, useQuery } from '@redwoodjs/web'
@@ -21,20 +22,20 @@ import getSymbolFromCurrency from 'currency-symbol-map'
 import { convertToLuxonDate, extractCategories } from 'src/utils/UtilFunctions'
 import { CREATE_ENTRY, GET_USER_PROFILE } from 'src/utils/graphql'
 import CategoryModal from 'src/components/CategoryModal/CategoryModal'
-const schema = z
-  .object({
-    title: z.string().nonempty('Title cannot be empty'),
-    amount: z
-      .string()
-      .nonempty('Invalid amount')
-      .transform((val) => parseFloat(val)),
-    category: z.string().refine((val) => val !== 'Please select a category', {
-      message: 'No category selected',
-    }),
-    entryDate: z.string().nonempty('No entry date selected'), //TODO
-    type: z.string().nonempty('No entry type chosen'),
-  })
-  .optional()
+//import { DateTime } from 'luxon'
+import AppDatePicker from 'src/components/AppDatePicker/AppDatePicker'
+const schema = z.object({
+  title: z.string().nonempty('Title cannot be empty'),
+  amount: z
+    .string()
+    .nonempty('Invalid amount')
+    .transform((val) => parseFloat(val)),
+  category: z.string().refine((val) => val !== 'Please select a category', {
+    message: 'No category selected',
+  }),
+  entryDate: z.string().nonempty('No entry date selected'), //TODO
+  type: z.string().nonempty('No entry type chosen'),
+})
 
 // const CREATE_ENTRY = gql`
 //   mutation CreateEntryMutation($input: CreateEntryInput!) {
@@ -54,8 +55,30 @@ const schema = z
 //   }
 // `
 
-const NonRecurringEntryForm = () => {
-  const formMethods = useForm()
+const NonRecurringEntryForm = ({ mode = 'create', entry = null }) => {
+  const initialValues =
+    mode === 'create'
+      ? {
+          title: '',
+          type: 'Expense',
+          amount: '',
+          entryDate: '',
+          category: '',
+        }
+      : {
+          title: entry.title,
+          type: entry.type,
+          amount: entry.amount,
+          entryDate: entry.entryDate,
+          category: entry.category,
+        }
+  // useEffect(() => {
+  //   if (mode === 'edit') formMethods.setValue('test', 'Oladayo')
+  // }, [])
+  const formMethods = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: initialValues,
+  })
   const { currentUser } = useAuth()
   const {
     loading: profileLoading,
@@ -76,6 +99,11 @@ const NonRecurringEntryForm = () => {
   })
   const submitHandler = (data) => {
     data.entryDate = convertToLuxonDate(data.entryDate)
+    if (mode === 'edit') {
+      // formMethods.setValue('test', 'Oladayo')
+      console.log(data)
+      return
+    }
     create({
       variables: {
         input: {
@@ -98,7 +126,7 @@ const NonRecurringEntryForm = () => {
       />
       <Form
         onSubmit={submitHandler}
-        validation={{ resolver: zodResolver(schema) }}
+        //validation={{ resolver: zodResolver(schema) }}
         formMethods={formMethods}
       >
         <FormError error={error} />
@@ -106,13 +134,13 @@ const NonRecurringEntryForm = () => {
           <div>
             <div className="space-x-4 flex">
               <div className="space-x-2">
-                <RadioField name="type" value="Income" />
+                <RadioField name="type" value="Income" id="Income" />
                 <Label className="text-md font-medium text-blue-900">
                   Income
                 </Label>
               </div>
               <div className="space-x-2">
-                <RadioField name="type" value="Expense" />
+                <RadioField name="type" value="Expense" id="Expense" />
                 <Label className="text-md font-medium text-blue-900">
                   Expense
                 </Label>
@@ -171,11 +199,9 @@ const NonRecurringEntryForm = () => {
               Entry Date
             </Label>
             <div className="mt-1">
-              <DateField
-                name="entryDate"
-                className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                errorClassName="text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500 block w-full rounded-md sm:text-sm border-red-300"
-                placeholder="DD.MM.YYYY"
+              <AppDatePicker
+                inputName="entryDate"
+                defaultDate={entry?.entryDate}
               />
             </div>
             <FieldError
@@ -183,6 +209,7 @@ const NonRecurringEntryForm = () => {
               className="mt-2 text-sm text-red-600"
             />
           </div>
+
           <div>
             <div className="flex items-center space-x-4">
               <Label
@@ -224,9 +251,9 @@ const NonRecurringEntryForm = () => {
           <div className="flex justify-end">
             <Submit
               disabled={loading}
-              className="flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 pb-4"
             >
-              Create Entry
+              {mode === 'create' ? 'Create Entry' : 'Update Entry'}
             </Submit>
           </div>
         </div>
