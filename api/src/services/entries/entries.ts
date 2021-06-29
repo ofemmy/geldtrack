@@ -98,7 +98,21 @@ export const updateEntry = async ({ input }) => {
     where: { id: userId },
     data: { categories: finalCategories },
   })
-  return input
+  return updateEntry
+}
+export const deleteEntry = async ({ entryId }) => {
+  const deletedEntry = await db.entry.delete({ where: { id: Number(entryId) } })
+  const user = await db.user.findUnique({ where: { id: deletedEntry.userId } })
+  const newCategories = budgetHandler({
+    userCategories: user.categories as any,
+    entryItem: deletedEntry,
+    operation: OPERATION.delete,
+  })
+  await db.user.update({
+    where: { id: user.id },
+    data: { categories: newCategories },
+  })
+  return deletedEntry
 }
 export const createCategory = async ({ input }) => {
   requireAuth()

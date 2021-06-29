@@ -6,8 +6,12 @@ import { EntryFrequency, EntryType } from '@prisma/client'
 import { PencilAltIcon, TrashIcon, CashIcon } from '@heroicons/react/outline'
 import { DateTime } from 'luxon'
 import AppModal from '../AppModal/AppModal'
+import { toast, Toaster } from '@redwoodjs/web/toast'
 import NonRecurringEntryForm from 'src/components/NonRecurringEntryForm/NonRecurringEntryForm'
 import RecurringEntryForm from 'src/components/RecurringEntryForm/RecurringEntryForm'
+import { useMutation } from '@redwoodjs/web'
+import { DELETE_ENTRY, GET_USER_PROFILE } from '../../utils/graphql'
+import { useAuth } from '@redwoodjs/auth'
 
 const DataTable = ({ data, dataPerPage = 10 }) => {
   const tableData = useMemo(() => data, [data])
@@ -70,6 +74,16 @@ const DataTable = ({ data, dataPerPage = 10 }) => {
     },
     usePagination
   )
+  const { currentUser } = useAuth()
+  const [deleteMutation] = useMutation(DELETE_ENTRY, {
+    onCompleted: () => {
+      toast.success('Entry Deleted')
+      window.location.reload()
+    },
+    refetchQueries: [
+      { query: GET_USER_PROFILE, variables: { id: currentUser.sub } },
+    ],
+  })
   const [formType, setFormType] = useState(EntryFrequency.NonRecurring)
   const [entryToEdit, setEntryToEdit] = useState(null)
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -79,10 +93,11 @@ const DataTable = ({ data, dataPerPage = 10 }) => {
     onOpen()
   }
   const deleteHandler = (entry) => {
-    console.log(entry)
+    deleteMutation({ variables: { entryId: entry.id } })
   }
   return (
     <>
+      <Toaster />
       <AppModal onClose={onClose} isOpen={isOpen} title="Edit Entry">
         {formType === EntryFrequency.NonRecurring ? (
           <NonRecurringEntryForm mode="edit" entry={entryToEdit} />

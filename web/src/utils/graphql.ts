@@ -14,6 +14,14 @@ export const UPDATE_ENTRY = gql`
     }
   }
 `
+export const DELETE_ENTRY = gql`
+  mutation DeleteEntryMutation($entryId: ID!) {
+    deleteEntry(entryId: $entryId) {
+      id
+      title
+    }
+  }
+`
 export const GET_USER_PROFILE = gql`
   query GetUserProfile($id: String!) {
     user(id: $id) {

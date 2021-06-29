@@ -87,5 +87,6 @@ export const schema = gql`
     createCategory(input: CreateCategoryInput!): Category
     createBudget(input: CreateBudgetInput!): Category
     updateEntry(input: UpdateEntryInput!): Entry
+    deleteEntry(entryId: ID!): Entry
   }
 `
