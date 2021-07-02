@@ -60,3 +60,10 @@ export const CREATE_BUDGET = gql`
     }
   }
 `
+export const DELETE_BUDGET = gql`
+  mutation DeleteBudgetMutation($input: DeleteBudgetInput!) {
+    deleteBudget(input: $input) {
+      name
+    }
+  }
+`

@@ -150,8 +150,7 @@ export const createBudget = async ({ input }) => {
     })
   ).categories as Prisma.JsonObject
   const categoryToBeUpdated = userCategories[category.toLowerCase()] as any
-  console.log(categoryToBeUpdated)
-  const previousUsed = categoryToBeUpdated.used
+  const previousUsed = categoryToBeUpdated?.used ?? 0
   const newBudget = {
     ...categoryToBeUpdated,
     rollOver,
@@ -166,5 +165,29 @@ export const createBudget = async ({ input }) => {
   })
   return newBudget
 }
-
+export const deleteBudget = async ({ input }) => {
+  const { userId, categoryName } = input
+  const userCategories = (
+    await await db.user.findUnique({
+      where: { id: userId },
+    })
+  ).categories as any
+  const categoryToBeDeleted = userCategories[categoryName.toLowerCase()]
+  const { name, type } = categoryToBeDeleted
+  const newBudget = {
+    name,
+    type,
+    rollOver: false,
+    monthlyBudget: 0,
+    runningBudget: 0,
+    used: 0,
+  }
+  const updatedCategory = { [name.toLowerCase()]: newBudget }
+  const updatedCategories = { ...userCategories, ...updatedCategory }
+  await db.user.update({
+    where: { id: userId },
+    data: { categories: updatedCategories },
+  })
+  return newBudget
+}
 //export const fetchIncomes = (queryOptions: QueryOptions) => {}

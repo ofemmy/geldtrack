@@ -82,11 +82,16 @@ export const schema = gql`
     recurringTo: DateTime
     userId: String
   }
+  input DeleteBudgetInput {
+    userId: String!
+    categoryName: String!
+  }
   type Mutation {
     createEntry(input: CreateEntryInput!): Entry
     createCategory(input: CreateCategoryInput!): Category
     createBudget(input: CreateBudgetInput!): Category
     updateEntry(input: UpdateEntryInput!): Entry
     deleteEntry(entryId: ID!): Entry
+    deleteBudget(input: DeleteBudgetInput!): Category
   }
 `
