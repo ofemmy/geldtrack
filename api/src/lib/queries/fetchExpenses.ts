@@ -55,7 +55,8 @@ export async function fetchExpenseTotal({ userId, date }) {
     } AND ${QueryFilter.nonRecurringAt(date)}) OR (frequency=${
       EntryFrequency.Recurring
     } AND ${QueryFilter.recurringAt(date)}))`
-  return res[0].sum
+  return { total: res[0].sum ?? 0 }
+
 }
 export async function fetchExpensesByCategory({ userId, date }) {
   return await db.$queryRaw`SELECT category,sum(amount) FROM expenses WHERE ${QueryFilter.isOwner(

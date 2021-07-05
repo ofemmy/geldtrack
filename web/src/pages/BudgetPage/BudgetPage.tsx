@@ -20,11 +20,7 @@ const BudgetPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   return (
     <div className="">
-      <div className="flex justify-between">
-        <p className="text-xs text-gray-500">
-          Running Budget is the accumulation that results from the rollover of
-          unused budget from previous months
-        </p>
+      <div className="">
         <Button color="yellow" onClick={onOpen}>
           Add Budget
         </Button>
@@ -45,7 +41,13 @@ const BudgetPage = () => {
     </div>
   )
 }
-function BudgetModal({ isOpen, onClose, categoryNames, currency, userId }) {
+export function BudgetModal({
+  isOpen,
+  onClose,
+  categoryNames,
+  currency,
+  userId,
+}) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
@@ -62,12 +64,6 @@ function BudgetModal({ isOpen, onClose, categoryNames, currency, userId }) {
             userId={userId}
           />
         </ModalBody>
-        {/* <ModalFooter>
-          <Button color="blue" classes="mr-4">
-            Save
-          </Button>
-          <Button onClick={onClose}>Cancel</Button>
-        </ModalFooter> */}
       </ModalContent>
     </Modal>
   )

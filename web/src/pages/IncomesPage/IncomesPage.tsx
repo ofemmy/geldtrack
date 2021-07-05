@@ -1,17 +1,23 @@
-import { Link, routes } from '@redwoodjs/router'
+import { useAuth } from '@redwoodjs/auth'
+import IncomeCell from 'src/components/IncomeCell'
+import { Info } from 'luxon'
+import { useDate } from 'src/utils/hooks/useDate'
+import MonthPicker from 'src/components/MonthPicker/MonthPicker'
 
 const IncomesPage = () => {
+  const { currentUser } = useAuth()
+  const { currentMonth } = useDate()
   return (
-    <>
-      <h1>IncomesPage</h1>
-      <p>
-        Find me in <code>./web/src/pages/IncomesPage/IncomesPage.tsx</code>
-      </p>
-      <p>
-        My default route is named <code>incomes</code>, link to me with `
-        <Link to={routes.incomes()}>Incomes</Link>`
-      </p>
-    </>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-xs font-light text-gray-500 tracking-wide uppercase">
+          {Info.months()[currentMonth - 1]} 2021
+        </h2>
+
+        <MonthPicker />
+      </div>
+      <IncomeCell userId={currentUser.sub} month={currentMonth} />
+    </div>
   )
 }
 

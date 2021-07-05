@@ -20,6 +20,11 @@ export const QUERY = gql`
       totalIncome
       totalExpense
     }
+    getTotalByCategory(userId: $userId, month: $month) {
+      name
+      incomes
+      expenses
+    }
   }
 `
 
@@ -34,14 +39,16 @@ export const Failure = ({ error }: CellFailureProps) => (
 export const Success = ({
   recentEntries: entries,
   getEntriesTotal,
+  getTotalByCategory: report,
 }: CellSuccessProps<EntriesQuery>) => {
   return (
     <div className="space-y-4">
       <div className="h-96 relative bg-gray-50 rounded-sm">
-        <DashboardChart />
+        <DashboardChart data={report} />
       </div>
       <SummaryBoard totalEntryData={getEntriesTotal} />
       <DataTable data={entries} />
+
       {/* <ul>
         {entries.map((item) => {
           return <li key={item.id}>{JSON.stringify(item)}</li>

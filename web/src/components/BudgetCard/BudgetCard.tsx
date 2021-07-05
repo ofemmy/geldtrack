@@ -1,12 +1,25 @@
+import { useDisclosure } from '@chakra-ui/react'
 import { PencilIcon, TrashIcon } from '@heroicons/react/outline'
-import { cx, numberToCurrency } from 'src/utils/UtilFunctions'
+import {
+  cx,
+  numberToCurrency,
+  extractCategories,
+} from 'src/utils/UtilFunctions'
 import { DELETE_BUDGET } from 'src/utils/graphql'
 import { useMutation } from '@redwoodjs/web'
 import { toast, Toaster } from '@redwoodjs/web/toast'
 import { useAuth } from '@redwoodjs/auth'
 import PercentageBar from '../PercentageBar/PercentageBar'
+import AppModal from 'src/components/AppModal/AppModal'
+import BudgetForm from '../BudgetForm/BudgetForm'
+import { useState } from 'react'
 const BudgetCard = ({ category, currency }) => {
   const { currentUser } = useAuth()
+  const [formMode, setFormMode] = useState('create')
+  const [budgetData, setBudgetData] = useState<any>(null)
+  const categoryNames = extractCategories(currentUser.profile)
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const [deleteBudgetMutation] = useMutation(DELETE_BUDGET, {
     onCompleted: () => {
       toast.success('Entry Deleted')
@@ -19,15 +32,36 @@ const BudgetCard = ({ category, currency }) => {
       variables: { input: { userId: currentUser.sub, categoryName } },
     })
   }
+  const editHandler = (cat) => {
+    setFormMode('edit')
+    setBudgetData({
+      category: cat.name,
+      monthlyBudget: cat.monthlyBudget,
+      rollOver: cat.rollOver,
+    })
+    onOpen()
+  }
   return (
-    <div className="relative bg-gray-50 pt-5 px-4 pb-6 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden space-y-4">
+    <div className="relative pt-5 px-4 pb-6 sm:pt-6 sm:px-6 shadow-md rounded-lg overflow-hidden space-y-4">
       <Toaster />
+      <AppModal isOpen={isOpen} onClose={onClose} title="Edit Budget">
+        <BudgetForm
+          categoryNames={categoryNames}
+          currency={currency}
+          onClose={onClose}
+          userId={currentUser.sub}
+          formMode={formMode}
+          budgetData={budgetData}
+        />
+      </AppModal>
       <div className="flex justify-between">
         <h3 className="text-xl font-medium text-blue-800">{category.name}</h3>
 
         <div className="space-x-2">
           <button
-            onClick={() => {}}
+            onClick={() => {
+              editHandler(category)
+            }}
             type="button"
             className="inline-flex items-center justify-center border border-transparent rounded-full shadow-sm text-yellow-600 bg-yellow-200 hover:bg-yellow-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 h-6 w-6"
           >

@@ -6,6 +6,17 @@ import { BeforeResolverSpecType } from '@redwoodjs/api'
 import { fetchEntryTotal } from 'src/lib/queries/fetchEntriesTotal'
 import { budgetHandler, createDate, OPERATION } from 'src/lib/utils'
 import { upperFirst } from 'lodash'
+import {
+  fetchIncomes,
+  fetchIncomesByCategory,
+  fetchIncomeTotal,
+} from '../../lib/queries/fetchIncomes'
+import {
+  fetchExpenses,
+  fetchExpensesByCategory,
+  fetchExpenseTotal,
+} from '../../lib/queries/fetchExpenses'
+import { fetchTotalByCategory } from '../../lib/queries/fetchTotalByCategory'
 
 // type QueryOptions = {
 //   userId: number
@@ -38,8 +49,37 @@ export const recentEntries = ({ userId }) => {
 }
 export const getEntriesTotal = ({ userId, month }) => {
   requireAuth()
+
   return fetchEntryTotal({ userId, date: createDate({ month }) })
 }
+export const getTotalByCategory = ({ userId, month }) => {
+  requireAuth()
+  return fetchTotalByCategory({ month, userId })
+}
+export const getIncomeEntries = async ({ userId, month }) => {
+  requireAuth()
+  const t = await fetchExpenseTotal({ userId, date: createDate({ month }) })
+  console.log(t)
+  return fetchIncomes({ userId, date: createDate({ month }) })
+}
+export const getIncomesByCategory = ({ userId, month }) => {
+  requireAuth()
+  return fetchIncomesByCategory({ userId, date: createDate({ month }) })
+}
+export const getTotalIncome = ({ userId, month }) => {
+  return fetchIncomeTotal({ userId, date: createDate({ month }) })
+}
+export const getExpensesByCategory = ({ userId, month }) => {
+  return fetchExpensesByCategory({
+    userId,
+    date: createDate({ month }),
+  })
+}
+export const getExpenseEntries = ({ userId, month }) => {
+  requireAuth()
+  return fetchExpenses({ userId, date: createDate({ month }) })
+}
+
 export const entriesForUser = ({ userId }) => {
   requireAuth()
   return db.entry.findMany({
@@ -47,10 +87,12 @@ export const entriesForUser = ({ userId }) => {
     orderBy: { entryDate: 'desc' },
   })
 }
+export const getTotalExpense = async ({ userId, month }) => {
+  return fetchExpenseTotal({ userId, date: createDate({ month }) })
 
+}
 export const Entry = {
   user: (_obj, { root }: ResolverArgs<Prisma.EntryWhereUniqueInput>) => {
-    console.log(root)
     return db.entry.findUnique({ where: { id: root.id } }).user()
   },
 }
@@ -98,7 +140,7 @@ export const updateEntry = async ({ input }) => {
     where: { id: userId },
     data: { categories: finalCategories },
   })
-  return updateEntry
+  return updatedEntry
 }
 export const deleteEntry = async ({ entryId }) => {
   const deletedEntry = await db.entry.delete({ where: { id: Number(entryId) } })
@@ -165,6 +207,26 @@ export const createBudget = async ({ input }) => {
   })
   return newBudget
 }
+export const updateBudget = async ({ input }) => {
+  requireAuth()
+  const { userId, category: categoryName, rollOver, monthlyBudget } = input
+  const userCategories = (
+    await db.user.findUnique({
+      where: { id: userId },
+    })
+  ).categories as any
+  const categoryToBeUpdated = userCategories[categoryName.toLowerCase()]
+  categoryToBeUpdated.monthlyBudget = monthlyBudget
+  categoryToBeUpdated.rollOver = rollOver
+  categoryToBeUpdated.runningBudget =
+    categoryToBeUpdated.monthlyBudget - categoryToBeUpdated.used
+  await db.user.update({
+    where: { id: userId },
+    data: { categories: userCategories },
+  })
+  return categoryToBeUpdated
+}
+
 export const deleteBudget = async ({ input }) => {
   const { userId, categoryName } = input
   const userCategories = (

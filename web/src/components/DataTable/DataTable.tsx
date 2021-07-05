@@ -14,8 +14,10 @@ import { DELETE_ENTRY, GET_USER_PROFILE } from '../../utils/graphql'
 import { useAuth } from '@redwoodjs/auth'
 
 const DataTable = ({ data, dataPerPage = 10 }) => {
+  const { currentUser } = useAuth()
+  const currency = currentUser?.profile.currency ?? 'EUR'
   const tableData = useMemo(() => data, [data])
-  const currency = 'EUR'
+
   const columns = useMemo(
     () => [
       {
@@ -74,7 +76,7 @@ const DataTable = ({ data, dataPerPage = 10 }) => {
     },
     usePagination
   )
-  const { currentUser } = useAuth()
+
   const [deleteMutation] = useMutation(DELETE_ENTRY, {
     onCompleted: () => {
       toast.success('Entry Deleted')

@@ -22,6 +22,13 @@ export const DELETE_ENTRY = gql`
     }
   }
 `
+export const UPDATE_BUDGET = gql`
+  mutation UpdateBudgetMutation($input: CreateBudgetInput!) {
+    updateBudget(input: $input) {
+      name
+    }
+  }
+`
 export const GET_USER_PROFILE = gql`
   query GetUserProfile($id: String!) {
     user(id: $id) {

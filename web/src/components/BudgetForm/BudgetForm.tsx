@@ -15,15 +15,29 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@redwoodjs/web'
 import getSymbolFromCurrency from 'currency-symbol-map'
 import Button from 'src/components/Button/Button'
-import { CREATE_BUDGET } from 'src/utils/graphql'
+import { CREATE_BUDGET, UPDATE_BUDGET } from 'src/utils/graphql'
 const budgetSchema = z
   .object({
     category: z.string().nonempty('Name cannot be empty'),
-    monthlyBudget: z.number(),
+    monthlyBudget: z
+      .string()
+      .nonempty('Invalid amount')
+      .transform((val) => parseFloat(val)),
     rollOver: z.boolean(),
   })
   .optional()
-const BudgetForm = ({ categoryNames, currency, onClose, userId }) => {
+const BudgetForm = ({
+  categoryNames,
+  currency,
+  onClose,
+  userId,
+  formMode = 'create',
+  budgetData = null,
+}) => {
+  const initialValues =
+    formMode === 'create'
+      ? { category: '', monthlyBudget: 0, rollOver: false }
+      : budgetData
   const [create, { loading, error }] = useMutation(CREATE_BUDGET, {
     onCompleted: () => {
       toast.success('New Budget Created')
@@ -32,20 +46,33 @@ const BudgetForm = ({ categoryNames, currency, onClose, userId }) => {
       window.location.reload()
     },
   })
+  const [update, { loading: updateLoading, error: updateError }] = useMutation(
+    UPDATE_BUDGET,
+    {
+      onCompleted: () => {
+        toast.success('Budget Updated')
+        formMethods.reset()
+        onClose()
+        window.location.reload()
+      },
+    }
+  )
   const submitHandler = (data) => {
-    //console.log(data)
-    create({ variables: { input: { ...data, userId } } })
+    if (formMode === 'create') {
+      create({ variables: { input: { ...data, userId } } })
+    } else {
+      update({ variables: { input: { ...data, userId } } })
+    }
   }
-  const formMethods = useForm()
+  const formMethods = useForm({
+    resolver: zodResolver(budgetSchema),
+    defaultValues: initialValues,
+  })
   return (
     <>
       <Toaster />
-      <Form
-        onSubmit={submitHandler}
-        formMethods={formMethods}
-        validation={{ resolver: zodResolver(budgetSchema) }}
-      >
-        <FormError error={error} />
+      <Form onSubmit={submitHandler} formMethods={formMethods}>
+        <FormError error={error || updateError} />
         <div className="space-y-6">
           <div>
             <Label
@@ -112,10 +139,10 @@ const BudgetForm = ({ categoryNames, currency, onClose, userId }) => {
           </div>
           <div className="flex space-x-2 justify-end pb-4">
             <Submit
-              disabled={loading}
+              disabled={loading || updateLoading}
               className="flex justify-center py-1.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-50"
             >
-              Save
+              {formMode === 'create' ? 'Save' : 'Update'}
             </Submit>
             <Button onClick={onClose}>Cancel</Button>
           </div>

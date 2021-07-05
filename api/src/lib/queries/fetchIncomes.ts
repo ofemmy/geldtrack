@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
 import { QueryFilter } from './queryFilter'
-//import { EntryFrequency } from '@prisma/client'
+import { EntryFrequency } from '@prisma/client'
 import { DateTime } from 'luxon'
 import { db } from 'src/lib/db'
 type QueryOptions = {
@@ -34,6 +34,26 @@ export async function fetchIncomes(queryOptions: QueryOptions) {
     },
   }
   return await resultOptions[frequencyType]()
+}
+export async function fetchIncomeTotal({ userId, date }) {
+  const res =
+    await db.$queryRaw`SELECT sum(amount) FROM incomes WHERE ${QueryFilter.isOwner(
+      userId
+    )} AND ((frequency=${
+      EntryFrequency.NonRecurring
+    } AND ${QueryFilter.nonRecurringAt(date)}) OR (frequency=${
+      EntryFrequency.Recurring
+    } AND ${QueryFilter.recurringAt(date)}))`
+  return { total: res[0].sum ?? 0 }
+}
+export async function fetchIncomesByCategory({ userId, date }) {
+  return await db.$queryRaw`SELECT category,sum(amount) FROM incomes WHERE ${QueryFilter.isOwner(
+    userId
+  )} AND ((frequency=${
+    EntryFrequency.NonRecurring
+  } AND ${QueryFilter.nonRecurringAt(date)}) OR (frequency=${
+    EntryFrequency.Recurring
+  } AND ${QueryFilter.recurringAt(date)})) GROUP BY category`
 }
 export function getQuery(userId, date) {
   const recurringIncomeQuery = {

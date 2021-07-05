@@ -1,14 +1,14 @@
 const PercentageBar = ({ value }) => {
   const fillerStyle = { width: `${Math.min(value, 100)}%` }
   return (
-    <div className="h-5 bg-gray-200 w-full rounded-lg overflow-hidden">
+    <div className="h-4 bg-gray-200 w-full rounded-lg overflow-hidden">
       <div
         style={fillerStyle}
         className={`bg-${determineColor(
           value
-        )}-500 h-full rounded-lg flex items-center text-right overflow-hidden`}
+        )}-500 h-full flex items-center text-right overflow-hidden`}
       >
-        <span className="p-3 text-white font-bold text-sm ml-auto">
+        <span className="py-3 px-1 text-white font-bold text-xs ml-auto">
           {Math.min(value, 100)}%
         </span>
       </div>

@@ -1,14 +1,16 @@
 import { CreditCardIcon, LibraryIcon } from '@heroicons/react/outline'
+import { useAuth } from '@redwoodjs/auth'
 import { numberToCurrency } from 'src/utils/UtilFunctions'
 const SummaryBoard = ({ totalEntryData }) => {
+  const { currentUser } = useAuth()
   const { totalIncome, totalExpense } = totalEntryData
   // const totalIncome = 3000
   // const totalExpense = 3400
-  const currency = 'EUR'
+  //md:space-x-12 p-4 bg-white shadow-sm border 
   return (
-    <div className="bg-white shadow-sm border  border-gray-100 rounded-md p-4">
-      <div className="flex flex-col md:flex-row md:space-x-12 space-y-4 md:space-y-0">
-        <div className="flex bg-green-100 rounded-md text-green-500 md:w-1/2 p-3">
+    <div className="rounded-md">
+      <div className="flex flex-col md:flex-row space-y-4 md:space-y-0">
+        <div className="flex bg-green-100 text-green-500 md:w-1/2 p-5">
           <div className="flex-shrink-0">
             <LibraryIcon className="h-6 w-6" />
           </div>
@@ -18,7 +20,10 @@ const SummaryBoard = ({ totalEntryData }) => {
                 Total Income
               </dt>
               <dd className="text-lg font-medium text-green-500">
-                {numberToCurrency({ amount: totalIncome, currency })}
+                {numberToCurrency({
+                  amount: totalIncome,
+                  currency: currentUser.profile.currency,
+                })}
               </dd>
             </dl>
           </div>
@@ -31,7 +36,7 @@ const SummaryBoard = ({ totalEntryData }) => {
             </a>
           </div>
         </div>
-        <div className="flex bg-red-100 p-3 rounded-md md:w-1/2">
+        <div className="flex bg-red-100 p-5  md:w-1/2">
           <div className="flex-shrink-0 text-red-500">
             <CreditCardIcon className="h-6 w-6" />
           </div>
@@ -41,7 +46,10 @@ const SummaryBoard = ({ totalEntryData }) => {
                 Total Expenses
               </dt>
               <dd className="text-lg font-medium text-red-500">
-                {numberToCurrency({ amount: totalExpense, currency })}
+                {numberToCurrency({
+                  amount: totalExpense,
+                  currency: currentUser.profile.currency,
+                })}
               </dd>
             </dl>
           </div>

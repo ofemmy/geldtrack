@@ -24,6 +24,18 @@ export const schema = gql`
     totalIncome: Float!
     totalExpense: Float!
   }
+  type TotalEntry {
+    total: Float
+  }
+  type TotalReport {
+    name: String!
+    incomes: Float!
+    expenses: Float!
+  }
+  type EntryByCategory {
+    category: String!
+    sum: Float!
+  }
   enum EntryType {
     Income
     Expense
@@ -45,6 +57,13 @@ export const schema = gql`
     entries(userId: String!, month: Int): [Entry!]!
     entriesForUser(userId: String!): [Entry]
     getEntriesTotal(userId: String!, month: Int): EntryTotal!
+    getIncomeEntries(userId: String!, month: Int): [Entry]
+    getExpenseEntries(userId: String!, month: Int): [Entry]
+    getTotalByCategory(userId: String!, month: Int): [TotalReport]
+    getIncomesByCategory(userId: String!, month: Int): [EntryByCategory]
+    getExpensesByCategory(userId: String!, month: Int): [EntryByCategory]
+    getTotalIncome(userId: String!, month: Int): TotalEntry
+    getTotalExpense(userId: String!, month: Int): TotalEntry
   }
 
   input CreateEntryInput {
@@ -90,6 +109,7 @@ export const schema = gql`
     createEntry(input: CreateEntryInput!): Entry
     createCategory(input: CreateCategoryInput!): Category
     createBudget(input: CreateBudgetInput!): Category
+    updateBudget(input: CreateBudgetInput!): Category
     updateEntry(input: UpdateEntryInput!): Entry
     deleteEntry(entryId: ID!): Entry
     deleteBudget(input: DeleteBudgetInput!): Category
