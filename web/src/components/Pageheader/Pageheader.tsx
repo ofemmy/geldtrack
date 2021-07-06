@@ -1,8 +1,14 @@
 import { Disclosure } from '@headlessui/react'
 import { MenuIcon, XIcon } from '@heroicons/react/outline'
+import { useAuth } from '@redwoodjs/auth'
+import { upperFirst } from 'lodash'
 import { NavLink, routes } from '@redwoodjs/router'
+import { isDemoUser } from '../../utils/UtilFunctions'
 import LogoutBtn from '../LogoutBtn/LogoutBtn'
 const Pageheader = () => {
+  const { currentUser } = useAuth()
+
+  const navigation = Object.keys(routes)
   return (
     <Disclosure as="nav" className="shadow-sm">
       {({ open }) => (
@@ -24,7 +30,8 @@ const Pageheader = () => {
                 >
                   Add New Entry
                 </NavLink>
-                <LogoutBtn />
+                {isDemoUser(currentUser) ? null : <LogoutBtn />}
+
                 <div className="flex sm:hidden">
                   <Disclosure.Button>
                     <span className="sr-only">Open main menu</span>
@@ -39,26 +46,18 @@ const Pageheader = () => {
             </div>
             <Disclosure.Panel className="sm:hidden">
               <div className="px-2 pt-2 pb-3 space-y-1">
-                <NavLink
-                  to={routes.home()}
-                  activeClassName="text-blue-900"
-                  className="text-blue-700 block px-3 py-2 rounded-md text-base font-medium"
-                >
-                  Home
-                </NavLink>
-                {/* <a
-                  href="/"
-                  className="bg-blue-900 text-white block px-3 py-2 rounded-md text-base font-medium"
-                >
-                  Dashboard
-                </a> */}
-                <NavLink
-                  to={routes.dashboard()}
-                  activeClassName="text-blue-900"
-                  className="text-gray-500 hover:bg-blue-200 hover:text-blue-500 block px-3 py-2 rounded-md text-base font-medium"
-                >
-                  Dashboard
-                </NavLink>
+                {navigation.map((item) =>
+                  !['home', 'newEntry', 'login'].includes(item) ? (
+                    <NavLink
+                      to={routes[item]()}
+                      key={item}
+                      className="text-gray-500 hover:text-blue-800 block px-3 py-2 rounded-md text-base font-medium"
+                      activeClassName="bg-blue-100 text-blue-800 font-semibold"
+                    >
+                      {upperFirst(item)}
+                    </NavLink>
+                  ) : null
+                )}
               </div>
             </Disclosure.Panel>
           </div>

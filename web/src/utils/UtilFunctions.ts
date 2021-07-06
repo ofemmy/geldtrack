@@ -22,3 +22,8 @@ export const convertToLuxonDate = (dateString) => {
   })
   return d
 }
+export const extractUser = (result) => {
+  return result[0].user
+}
+export const isDemoUser = (currentUser) =>
+  currentUser.email === process.env.DEMO_USER_EMAIL

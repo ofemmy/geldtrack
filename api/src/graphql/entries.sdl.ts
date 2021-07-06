@@ -64,6 +64,7 @@ export const schema = gql`
     getExpensesByCategory(userId: String!, month: Int): [EntryByCategory]
     getTotalIncome(userId: String!, month: Int): TotalEntry
     getTotalExpense(userId: String!, month: Int): TotalEntry
+    getRecurringEntries(userId: String!): [Entry]
   }
 
   input CreateEntryInput {

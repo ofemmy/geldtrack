@@ -17,6 +17,7 @@ import {
   fetchExpenseTotal,
 } from '../../lib/queries/fetchExpenses'
 import { fetchTotalByCategory } from '../../lib/queries/fetchTotalByCategory'
+import { fetchRecurringEntries } from '../../lib/queries/fetchRecurringEntries'
 
 // type QueryOptions = {
 //   userId: number
@@ -69,6 +70,9 @@ export const getIncomesByCategory = ({ userId, month }) => {
 export const getTotalIncome = ({ userId, month }) => {
   return fetchIncomeTotal({ userId, date: createDate({ month }) })
 }
+export const getRecurringEntries = ({ userId }) => {
+  return fetchRecurringEntries({ userId })
+}
 export const getExpensesByCategory = ({ userId, month }) => {
   return fetchExpensesByCategory({
     userId,
@@ -89,7 +93,6 @@ export const entriesForUser = ({ userId }) => {
 }
 export const getTotalExpense = async ({ userId, month }) => {
   return fetchExpenseTotal({ userId, date: createDate({ month }) })
-
 }
 export const Entry = {
   user: (_obj, { root }: ResolverArgs<Prisma.EntryWhereUniqueInput>) => {

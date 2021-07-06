@@ -6,11 +6,11 @@ const SummaryBoard = ({ totalEntryData }) => {
   const { totalIncome, totalExpense } = totalEntryData
   // const totalIncome = 3000
   // const totalExpense = 3400
-  //md:space-x-12 p-4 bg-white shadow-sm border 
+  //md:space-x-12 p-4 bg-white shadow-sm border
   return (
     <div className="rounded-md">
-      <div className="flex flex-col md:flex-row space-y-4 md:space-y-0">
-        <div className="flex bg-green-100 text-green-500 md:w-1/2 p-5">
+      <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0">
+        <div className="flex bg-green-100 text-green-500 lg:w-1/2 p-5">
           <div className="flex-shrink-0">
             <LibraryIcon className="h-6 w-6" />
           </div>
@@ -36,7 +36,7 @@ const SummaryBoard = ({ totalEntryData }) => {
             </a>
           </div>
         </div>
-        <div className="flex bg-red-100 p-5  md:w-1/2">
+        <div className="flex bg-red-100 p-5  lg:w-1/2">
           <div className="flex-shrink-0 text-red-500">
             <CreditCardIcon className="h-6 w-6" />
           </div>

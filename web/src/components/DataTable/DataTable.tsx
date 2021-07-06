@@ -11,11 +11,8 @@ import NonRecurringEntryForm from 'src/components/NonRecurringEntryForm/NonRecur
 import RecurringEntryForm from 'src/components/RecurringEntryForm/RecurringEntryForm'
 import { useMutation } from '@redwoodjs/web'
 import { DELETE_ENTRY, GET_USER_PROFILE } from '../../utils/graphql'
-import { useAuth } from '@redwoodjs/auth'
 
-const DataTable = ({ data, dataPerPage = 10 }) => {
-  const { currentUser } = useAuth()
-  const currency = currentUser?.profile.currency ?? 'EUR'
+const DataTable = ({ data, dataPerPage = 10, currency = 'EUR', userId }) => {
   const tableData = useMemo(() => data, [data])
 
   const columns = useMemo(
@@ -82,9 +79,7 @@ const DataTable = ({ data, dataPerPage = 10 }) => {
       toast.success('Entry Deleted')
       window.location.reload()
     },
-    refetchQueries: [
-      { query: GET_USER_PROFILE, variables: { id: currentUser.sub } },
-    ],
+    refetchQueries: [{ query: GET_USER_PROFILE, variables: { id: userId } }],
   })
   const [formType, setFormType] = useState(EntryFrequency.NonRecurring)
   const [entryToEdit, setEntryToEdit] = useState(null)
@@ -107,8 +102,8 @@ const DataTable = ({ data, dataPerPage = 10 }) => {
           <RecurringEntryForm mode="edit" entry={entryToEdit} />
         )}
       </AppModal>
-      <div className="shadow sm:hidden">
-        <ul className="mt-2 divide-y divide-gray-200 overflow-hidden shadow sm:hidden">
+      <div className="shadow lg:hidden">
+        <ul className="mt-2 divide-y divide-gray-200 overflow-hidden shadow lg:hidden">
           {tableData.map((entry) => (
             <li key={entry.id}>
               <a
@@ -135,15 +130,24 @@ const DataTable = ({ data, dataPerPage = 10 }) => {
                         </span>
                       </span>
                       <time dateTime={entry.entryDate}>
-                        {entry.entryDate.toString()}
+                        {DateTime.fromISO(entry.entryDate).toLocaleString()}
                       </time>
                     </span>
                   </span>
                   <span className="px-6 py-4 whitespace-nowrap flex justify-center items-center space-x-2">
                     <button onClick={() => {}} className="text-yellow-500">
-                      <PencilAltIcon className="h-4 w-4" />
+                      <PencilAltIcon
+                        className="h-4 w-4"
+                        onClick={() => {
+                          editHandler(entry)
+                        }}
+                      />
                     </button>
-                    <button onClick={() => {}}>
+                    <button
+                      onClick={() => {
+                        deleteHandler(entry)
+                      }}
+                    >
                       <TrashIcon className="text-red-500 w-4 h-4" />
                     </button>
                   </span>
@@ -177,7 +181,7 @@ const DataTable = ({ data, dataPerPage = 10 }) => {
           </div>
         </nav> */}
       </div>
-      <div className="hidden sm:block overflow-x-auto">
+      <div className="hidden lg:block overflow-x-auto">
         <div className="">
           <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg min-w-full flex flex-col">
             <table

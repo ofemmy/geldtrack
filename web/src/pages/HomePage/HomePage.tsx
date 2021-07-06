@@ -1,9 +1,17 @@
 //import { Link, routes } from '@redwoodjs/router'
 import { CheckIcon } from '@heroicons/react/outline'
-import { NavLink, routes } from '@redwoodjs/router'
+import { useAuth } from '@redwoodjs/auth'
+import { NavLink, routes, navigate } from '@redwoodjs/router'
 import SignUpForm from 'src/components/SignUpForm/SignUpForm'
 
 const HomePage = () => {
+  const { logIn } = useAuth()
+  const loginDemo = () => {
+    logIn({
+      email: process.env.DEMO_USER_EMAIL,
+      password: process.env.DEMO_USER_PASSWORD,
+    }).then(() => navigate(routes.dashboard()))
+  }
   const features = [
     {
       name: 'Create your own category',
@@ -83,7 +91,7 @@ const HomePage = () => {
           <div className="mx-auto max-w-7xl">
             <div className="lg:grid lg:grid-cols-12 lg:gap-8">
               <div className="px-4 sm:px-6 sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left lg:flex lg:items-center">
-                <div>
+                <div className="space-y-6">
                   <h1 className="mt-4 text-4xl tracking-tight font-extrabold text-white sm:mt-5 sm:leading-none lg:mt-6 lg:text-5xl xl:text-5xl">
                     <span className="md:block">Tracking your money flow</span>{' '}
                     <span className="text-blue-400 md:block">
@@ -95,6 +103,14 @@ const HomePage = () => {
                     your incomes and expenses. With this app, you gain more
                     control and oversight of your money flow.
                   </p>
+                  <div className="rounded-md shadow">
+                    <button
+                      onClick={loginDemo}
+                      className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10 uppercase"
+                    >
+                      Try demo
+                    </button>
+                  </div>
                 </div>
               </div>
               <div className="mt-16 sm:mt-24 lg:mt-0 lg:col-span-6">

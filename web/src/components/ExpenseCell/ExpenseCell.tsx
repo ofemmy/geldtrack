@@ -2,8 +2,10 @@ import type { ExpenseQuery } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import DataTable from 'src/components/DataTable/DataTable'
 import { DataChart } from '../IncomeCell'
-import { numberToCurrency } from 'src/utils/UtilFunctions'
+import { extractUser, numberToCurrency } from 'src/utils/UtilFunctions'
 import { CreditCardIcon } from '@heroicons/react/outline'
+import EmptyComponent from '../EmptyComponent/EmptyComponent'
+import SectionHeading from 'src/components/SectionHeading/SectionHeading'
 export const QUERY = gql`
   query ExpenseQuery($userId: String!, $month: Int) {
     getExpenseEntries(userId: $userId, month: $month) {
@@ -33,7 +35,7 @@ export const QUERY = gql`
 
 export const Loading = () => <div>Loading...</div>
 
-export const Empty = () => <div>Empty</div>
+export const Empty = () => <EmptyComponent />
 
 export const Failure = ({ error }: CellFailureProps) => (
   <div style={{ color: 'red' }}>Error: {error.message}</div>
@@ -44,11 +46,15 @@ export const Success = ({
   getExpensesByCategory: expenseCategories,
   getTotalExpense: totalExpenses,
 }: CellSuccessProps<ExpenseQuery>) => {
-  const user = expenses[0].user
+  const user = extractUser(expenses)
   return (
     <div className="space-y-4">
       <div className="h-96 relative">
-        <DataChart chartData={expenseCategories} barColor="red" />
+        <DataChart
+          chartData={expenseCategories}
+          barColor="red"
+          currency={user.currency}
+        />
       </div>
       <div>
         <div className="flex bg-red-100 p-5">
@@ -70,7 +76,8 @@ export const Success = ({
           </div>
         </div>
       </div>
-      <DataTable data={expenses} />
+      <SectionHeading text="Expenses" />
+      <DataTable data={expenses} userId={user.id} currency={user.currency} />
     </div>
   )
 }

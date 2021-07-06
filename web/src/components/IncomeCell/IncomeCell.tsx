@@ -8,13 +8,13 @@ import {
   YAxis,
 } from 'recharts'
 import { LibraryIcon } from '@heroicons/react/outline'
-
-import { numberToCurrency } from 'src/utils/UtilFunctions'
+import EmptyComponent from 'src/components/EmptyComponent/EmptyComponent'
+import { extractUser, numberToCurrency } from 'src/utils/UtilFunctions'
 import type { IncomeQuery } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import getSymbolFromCurrency from 'currency-symbol-map'
 import DataTable from 'src/components//DataTable/DataTable'
-import { useAuth } from '@redwoodjs/auth'
+import SectionHeading from 'src/components/SectionHeading/SectionHeading'
 export const QUERY = gql`
   query IncomeQuery($userId: String!, $month: Int) {
     getIncomeEntries(userId: $userId, month: $month) {
@@ -30,6 +30,7 @@ export const QUERY = gql`
       recurringTo
       user {
         currency
+        id
       }
     }
     getIncomesByCategory(userId: $userId, month: $month) {
@@ -44,7 +45,7 @@ export const QUERY = gql`
 
 export const Loading = () => <div>Loading...</div>
 
-export const Empty = () => <div>Empty</div>
+export const Empty = () => <EmptyComponent />
 
 export const Failure = ({ error }: CellFailureProps) => (
   <div style={{ color: 'red' }}>Error: {error.message}</div>
@@ -55,11 +56,15 @@ export const Success = ({
   getIncomesByCategory: incomeCategories,
   getTotalIncome: totalIncome,
 }: CellSuccessProps<IncomeQuery>) => {
-  const user = incomes[0].user
+  const user = extractUser(incomes)
   return (
     <div>
       <div className="h-96 relative">
-        <DataChart chartData={incomeCategories} barColor="green" />
+        <DataChart
+          chartData={incomeCategories}
+          barColor="green"
+          currency={user.currency}
+        />
       </div>
       <div>
         <div className="flex bg-green-100 text-green-500 p-5">
@@ -79,15 +84,14 @@ export const Success = ({
               </dd>
             </dl>
           </div>
-         
         </div>
       </div>
-      <DataTable data={incomes} />
+      <SectionHeading text="Incomes" />
+      <DataTable data={incomes} userId={user.id} currency={user.currency} />
     </div>
   )
 }
-export function DataChart({ chartData, barColor = '#0868A0' }) {
-  const { currentUser } = useAuth()
+export function DataChart({ chartData, barColor = '#0868A0', currency }) {
   return (
     <div className="h-full py-5 px-2">
       <ResponsiveContainer width="100%" height="100%">
@@ -96,16 +100,9 @@ export function DataChart({ chartData, barColor = '#0868A0' }) {
           <XAxis dataKey="category" />
           <Tooltip />
 
-          <YAxis
-            unit={getSymbolFromCurrency(currentUser?.profile.currency ?? 'EUR')}
-          />
+          <YAxis unit={getSymbolFromCurrency(currency)} />
           {/* <Bar dataKey="incomes" fill={"green"} stackId="a" unit={currency} maxBarSize={100} /> */}
-          <Bar
-            dataKey="sum"
-            fill={barColor}
-            unit={currentUser?.profile.currency ?? 'EUR'}
-            maxBarSize={100}
-          />
+          <Bar dataKey="sum" fill={barColor} unit={currency} maxBarSize={100} />
         </BarChart>
       </ResponsiveContainer>
     </div>
