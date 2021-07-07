@@ -47,7 +47,7 @@ const Pageheader = () => {
             <Disclosure.Panel className="sm:hidden">
               <div className="px-2 pt-2 pb-3 space-y-1">
                 {navigation.map((item) =>
-                  !['home', 'newEntry', 'login'].includes(item) ? (
+                  !['home', 'newEntry', 'login', 'verify'].includes(item) ? (
                     <NavLink
                       to={routes[item]()}
                       key={item}
