@@ -8,7 +8,7 @@
 [web]
   port = 8910
   apiProxyPath = "/.redwood/functions"
-  includeEnvironmentVariables = ['DEMO_USER_EMAIL','DEMO_USER_PASSWORD']
+  includeEnvironmentVariables = ['DEMO_USER_EMAIL','DEMO_USER_PASSWORD','SUPABASE_URL','SUPABASE_KEY']
 [api]
   port = 8911
 [browser]
