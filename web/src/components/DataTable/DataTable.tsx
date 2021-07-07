@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { useTable, usePagination } from 'react-table'
 import { useDisclosure } from '@chakra-ui/hooks'
 import { cx, numberToCurrency } from 'src/utils/UtilFunctions'
-import { EntryFrequency, EntryType } from '@prisma/client'
+//import { EntryFrequency, EntryType } from '@prisma/client'
 import { PencilAltIcon, TrashIcon, CashIcon } from '@heroicons/react/outline'
 import { DateTime } from 'luxon'
 import AppModal from '../AppModal/AppModal'
@@ -11,7 +11,14 @@ import NonRecurringEntryForm from 'src/components/NonRecurringEntryForm/NonRecur
 import RecurringEntryForm from 'src/components/RecurringEntryForm/RecurringEntryForm'
 import { useMutation } from '@redwoodjs/web'
 import { DELETE_ENTRY, GET_USER_PROFILE } from '../../utils/graphql'
-
+const EntryFrequency = {
+  NonRecurring: 'NonRecurring',
+  Recurring: 'Recurring',
+}
+const EntryType = {
+  Expense: 'Expense',
+  Income: 'Income',
+}
 const DataTable = ({ data, dataPerPage = 10, currency = 'EUR', userId }) => {
   const tableData = useMemo(() => data, [data])
 
