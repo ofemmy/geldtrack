@@ -5,7 +5,6 @@ import {
   EmailField,
   FieldError,
   PasswordField,
-  FormError,
 } from '@redwoodjs/forms'
 import { routes, navigate, Link } from '@redwoodjs/router'
 import { useAuth } from '@redwoodjs/auth'
@@ -47,11 +46,16 @@ const LoginPage = () => {
           className="mt-8 space-y-6"
           validation={{ mode: 'onBlur', resolver: zodResolver(schema) }}
         >
-          <FormError
+          {error && (
+            <p className="text-red-500 text-sm text-center">
+              User name or password incorrect
+            </p>
+          )}
+          {/* <FormError
             error={error}
             titleClassName="font-semibold"
             wrapperClassName="bg-red-100 text-red-900 text-sm p-3 rounded"
-          />
+          /> */}
           <input type="hidden" name="remember" defaultValue="true" />
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
@@ -91,8 +95,8 @@ const LoginPage = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
+          <div className="flex items-center justify-end">
+            {/* <div className="flex items-center">
               <input
                 id="remember_me"
                 name="remember_me"
@@ -105,7 +109,7 @@ const LoginPage = () => {
               >
                 Remember me
               </label>
-            </div>
+            </div> */}
 
             <div className="text-sm">
               <Link to="/">Forgot Password</Link>

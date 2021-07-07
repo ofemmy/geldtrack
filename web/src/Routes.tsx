@@ -13,6 +13,7 @@ import AppLayout from './layouts/AppLayout/AppLayout'
 const Routes = () => {
   return (
     <Router>
+      <Route path="/verify" page={VerifyPage} name="verify" />
       <Route path="/login" page={LoginPage} name="login" />
       <Route path="/" page={HomePage} name="home" />
       <Private unauthenticated="login">

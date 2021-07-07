@@ -30,7 +30,7 @@ const SignUpForm = () => {
   const onSubmit = (data) => {
     setError(null)
     signUp({ email: data.email, password: data.password })
-      .then(() => navigate(routes.dashboard()))
+      .then(() => navigate(routes.verify()))
       .catch((error) => setError(error.message))
   }
   return (
