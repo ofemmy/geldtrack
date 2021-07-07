@@ -18,7 +18,7 @@ import { toast, Toaster } from '@redwoodjs/web/toast'
 import { useMutation, useQuery } from '@redwoodjs/web'
 import getSymbolFromCurrency from 'currency-symbol-map'
 import { convertToLuxonDate, extractCategories } from 'src/utils/UtilFunctions'
-import { CREATE_ENTRY, GET_USER_PROFILE } from 'src/utils/graphql'
+import { CREATE_ENTRY, GET_USER_PROFILE, UPDATE_ENTRY } from 'src/utils/graphql'
 import AppDatePicker from 'src/components/AppDatePicker/AppDatePicker'
 import CategoryModal from 'src/components/CategoryModal/CategoryModal'
 const schema = z.object({
@@ -76,19 +76,45 @@ const RecurringEntryForm = ({ mode = 'create', entry = null }) => {
       formMethods.reset()
     },
   })
+  const [update, { loading: updateLoading, error: updateError }] = useMutation(
+    UPDATE_ENTRY,
+    {
+      onCompleted: () => {
+        toast.success('Entry Updated')
+        window.location.reload()
+      },
+      refetchQueries: [
+        { query: GET_USER_PROFILE, variables: { id: currentUser.sub } },
+      ],
+    }
+  )
   const submitHandler = (data) => {
     data.entryDate = convertToLuxonDate(data.entryDate)
     data.recurringFrom = convertToLuxonDate(data.recurringFrom)
     data.recurringTo = convertToLuxonDate(data.recurringTo)
-    create({
-      variables: {
-        input: {
-          ...data,
-          frequency: 'Recurring',
-          userId: currentUser.sub,
+    if (mode === 'edit') {
+      const { __typename, ...rest } = data
+      update({
+        variables: {
+          input: {
+            ...rest,
+            frequency: 'Recurring',
+            userId: currentUser.sub,
+            id: entry?.id,
+          },
         },
-      },
-    })
+      })
+    } else {
+      create({
+        variables: {
+          input: {
+            ...data,
+            frequency: 'Recurring',
+            userId: currentUser.sub,
+          },
+        },
+      })
+    }
   }
   const { isOpen, onClose, onOpen } = useDisclosure()
   return (
@@ -101,7 +127,7 @@ const RecurringEntryForm = ({ mode = 'create', entry = null }) => {
         refetch={refetch}
       />
       <Form onSubmit={submitHandler} formMethods={formMethods}>
-        <FormError error={error} />
+        <FormError error={error || updateError} />
         <div className="space-y-8">
           <div>
             <div className="space-x-4 flex">
@@ -257,7 +283,7 @@ const RecurringEntryForm = ({ mode = 'create', entry = null }) => {
           </div>
           <div className="flex justify-end">
             <Submit
-              disabled={loading}
+              disabled={loading || updateLoading}
               className="flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               {mode === 'create' ? 'Create Entry' : 'Update Entry'}

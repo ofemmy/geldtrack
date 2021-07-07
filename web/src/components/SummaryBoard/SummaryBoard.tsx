@@ -1,5 +1,6 @@
 import { CreditCardIcon, LibraryIcon } from '@heroicons/react/outline'
 import { useAuth } from '@redwoodjs/auth'
+import { Link, routes } from '@redwoodjs/router'
 import { numberToCurrency } from 'src/utils/UtilFunctions'
 const SummaryBoard = ({ totalEntryData }) => {
   const { currentUser } = useAuth()
@@ -28,12 +29,12 @@ const SummaryBoard = ({ totalEntryData }) => {
             </dl>
           </div>
           <div>
-            <a
-              href="/"
+            <Link
+              to={routes.incomes()}
               className="uppercase text-xs p-2 bg-green-200 rounded-sm hover:text-white hover:bg-green-300"
             >
               View all
-            </a>
+            </Link>
           </div>
         </div>
         <div className="flex bg-red-100 p-5  lg:w-1/2">
@@ -54,12 +55,12 @@ const SummaryBoard = ({ totalEntryData }) => {
             </dl>
           </div>
           <div>
-            <a
-              href="/"
+            <Link
+              to={routes.expenses()}
               className="uppercase text-xs p-2 bg-red-200 text-red-500 rounded-sm hover:text-white hover:bg-red-300"
             >
               View all
-            </a>
+            </Link>
           </div>
         </div>
       </div>

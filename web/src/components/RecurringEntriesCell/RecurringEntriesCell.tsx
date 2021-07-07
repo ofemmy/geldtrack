@@ -4,6 +4,7 @@ import DataTable from 'src/components/DataTable/DataTable'
 import EmptyComponent from 'src/components/EmptyComponent/EmptyComponent'
 import SectionHeading from 'src/components/SectionHeading/SectionHeading'
 import { extractUser } from '../../utils/UtilFunctions'
+import LoadingComponent from '../LoadingComponent/LoadingComponent'
 export const QUERY = gql`
   query RecurringEntriesQuery($userId: String!) {
     getRecurringEntries(userId: $userId) {
@@ -24,7 +25,7 @@ export const QUERY = gql`
   }
 `
 
-export const Loading = () => <div>Loading...</div>
+export const Loading = () => <LoadingComponent />
 
 export const Empty = () => <EmptyComponent />
 

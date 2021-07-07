@@ -6,6 +6,7 @@ import { extractUser, numberToCurrency } from 'src/utils/UtilFunctions'
 import { CreditCardIcon } from '@heroicons/react/outline'
 import EmptyComponent from '../EmptyComponent/EmptyComponent'
 import SectionHeading from 'src/components/SectionHeading/SectionHeading'
+import LoadingComponent from '../LoadingComponent/LoadingComponent'
 export const QUERY = gql`
   query ExpenseQuery($userId: String!, $month: Int) {
     getExpenseEntries(userId: $userId, month: $month) {
@@ -33,7 +34,7 @@ export const QUERY = gql`
   }
 `
 
-export const Loading = () => <div>Loading...</div>
+export const Loading = () => <LoadingComponent />
 
 export const Empty = () => <EmptyComponent />
 

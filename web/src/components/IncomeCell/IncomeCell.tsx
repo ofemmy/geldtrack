@@ -15,6 +15,7 @@ import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import getSymbolFromCurrency from 'currency-symbol-map'
 import DataTable from 'src/components//DataTable/DataTable'
 import SectionHeading from 'src/components/SectionHeading/SectionHeading'
+import LoadingComponent from '../LoadingComponent/LoadingComponent'
 export const QUERY = gql`
   query IncomeQuery($userId: String!, $month: Int) {
     getIncomeEntries(userId: $userId, month: $month) {
@@ -43,7 +44,7 @@ export const QUERY = gql`
   }
 `
 
-export const Loading = () => <div>Loading...</div>
+export const Loading = () => <LoadingComponent />
 
 export const Empty = () => <EmptyComponent />
 

@@ -6,6 +6,7 @@ import EmptyComponent from 'src/components/EmptyComponent/EmptyComponent'
 import DataTable from '../DataTable/DataTable'
 import { extractUser } from '../../utils/UtilFunctions'
 import SectionHeading from '../SectionHeading/SectionHeading'
+import LoadingComponent from 'src/components/LoadingComponent/LoadingComponent'
 export const QUERY = gql`
   query EntriesQuery($userId: String!, $month: Int) {
     recentEntries(userId: $userId) {
@@ -35,7 +36,7 @@ export const QUERY = gql`
   }
 `
 
-export const Loading = () => <div>Loading...</div>
+export const Loading = () => <LoadingComponent />
 
 export const Empty = () => <EmptyComponent />
 
