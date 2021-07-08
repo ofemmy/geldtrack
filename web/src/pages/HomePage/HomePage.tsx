@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 
 import { CheckIcon } from '@heroicons/react/outline'
 import { useAuth } from '@redwoodjs/auth'
-import { NavLink, routes, navigate } from '@redwoodjs/router'
+import { NavLink, routes, navigate, useLocation } from '@redwoodjs/router'
 import SignUpForm from 'src/components/SignUpForm/SignUpForm'
 import AppModal from 'src/components/AppModal/AppModal'
 import { useDisclosure } from '@chakra-ui/react'
@@ -11,9 +11,9 @@ import ResetPasswordForm from 'src/components/ResetPasswordForm/ResetPasswordFor
 
 const HomePage = () => {
   const [userToken, setUserToken] = useState(null)
+  const { hash } = useLocation()
   const { isOpen, onClose, onOpen } = useDisclosure()
-  const hash =
-    '#access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNjI1Nzc1MzU1LCJzdWIiOiIzNWZiMmE1OS1lOWZlLTRlNDgtYWFmZS00ZThmNDk3NzE3MDMiLCJlbWFpbCI6ImdvZHN1cmVzdEBnbWFpbC5jb20iLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCJ9LCJ1c2VyX21ldGFkYXRhIjp7fSwicm9sZSI6ImF1dGhlbnRpY2F0ZWQifQ.rsen81hkeSds9CBd0QqFBobTYFKqz0eQ6hyghAtwEAw&expires_in=3600&refresh_token=5PHr7G_2OirJQ4951PQEVQ&token_type=bearer&type=recovery'
+
   useEffect(() => {
     if (!hash) return
     const res = hash.split('=')
@@ -23,9 +23,8 @@ const HomePage = () => {
       setUserToken(accessToken)
       onOpen()
     }
-  }, [onOpen])
+  }, [hash, onOpen])
 
-  //https://rzjinntvvjahpevxierh.supabase.co/auth/v1/verify?token=EpRfnBc3YwHxSRW3GbmNnQ&type=recovery&redirect_to=https://www.geldtrack.io
   const { logIn } = useAuth()
   const loginDemo = () => {
     logIn({
