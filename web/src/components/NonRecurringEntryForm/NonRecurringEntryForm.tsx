@@ -3,7 +3,6 @@ import {
   Form,
   Label,
   SelectField,
-  NumberField,
   RadioField,
   FieldError,
   TextField,
@@ -111,6 +110,14 @@ const NonRecurringEntryForm = ({ mode = 'create', entry = null }) => {
   )
   const submitHandler = (data) => {
     data.entryDate = convertToLuxonDate(data.entryDate)
+    if (isNaN(data.amount)) {
+      formMethods.setError('amount', {
+        type: 'manual',
+        message: 'Invalid Amount',
+      })
+      return
+    }
+
     if (mode === 'edit') {
       const { __typename, ...rest } = data
       update({
@@ -146,6 +153,7 @@ const NonRecurringEntryForm = ({ mode = 'create', entry = null }) => {
         refetch={refetch}
       />
       <Form
+        noValidate={true}
         onSubmit={submitHandler}
         //validation={{ resolver: zodResolver(schema) }}
         formMethods={formMethods}
@@ -200,7 +208,7 @@ const NonRecurringEntryForm = ({ mode = 'create', entry = null }) => {
                   {getSymbolFromCurrency(currentUser.profile.currency)}
                 </span>
               </div>
-              <NumberField
+              <TextField
                 name="amount"
                 className="focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md pl-12 pr-12"
                 errorClassName="text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500 block w-full rounded-md sm:text-sm border-red-300 pl-12 pr-12"

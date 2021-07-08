@@ -2,7 +2,6 @@ import {
   Form,
   Label,
   SelectField,
-  NumberField,
   RadioField,
   FieldError,
   TextField,
@@ -92,6 +91,13 @@ const RecurringEntryForm = ({ mode = 'create', entry = null }) => {
     data.entryDate = convertToLuxonDate(data.entryDate)
     data.recurringFrom = convertToLuxonDate(data.recurringFrom)
     data.recurringTo = convertToLuxonDate(data.recurringTo)
+    if (isNaN(data.amount)) {
+      formMethods.setError('amount', {
+        type: 'manual',
+        message: 'Invalid Amount',
+      })
+      return
+    }
     if (mode === 'edit') {
       const { __typename, ...rest } = data
       update({
@@ -175,7 +181,7 @@ const RecurringEntryForm = ({ mode = 'create', entry = null }) => {
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 {getSymbolFromCurrency(user?.currency) || ''}
               </div>
-              <NumberField
+              <TextField
                 name="amount"
                 className="focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md pl-12 pr-12"
                 errorClassName="text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500 block w-full rounded-md sm:text-sm border-red-300 pl-12 pr-12"
