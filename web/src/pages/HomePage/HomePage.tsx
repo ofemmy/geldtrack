@@ -1,10 +1,13 @@
-//import { Link, routes } from '@redwoodjs/router'
+import { useLocation } from '@redwoodjs/router'
 import { CheckIcon } from '@heroicons/react/outline'
 import { useAuth } from '@redwoodjs/auth'
 import { NavLink, routes, navigate } from '@redwoodjs/router'
 import SignUpForm from 'src/components/SignUpForm/SignUpForm'
 
 const HomePage = () => {
+  const loc = useLocation()
+  console.log(loc)
+  //https://rzjinntvvjahpevxierh.supabase.co/auth/v1/verify?token=EpRfnBc3YwHxSRW3GbmNnQ&type=recovery&redirect_to=https://www.geldtrack.io
   const { logIn } = useAuth()
   const loginDemo = () => {
     logIn({

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import {
   Form,
   Label,
@@ -11,20 +12,46 @@ import { useAuth } from '@redwoodjs/auth'
 import { LockClosedIcon } from '@heroicons/react/solid'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+
 const schema = z.object({
   email: z.string().email('Invalid email'),
   password: z.string().nonempty('Password cannot be empty'),
 })
 const LoginPage = () => {
-  const { logIn } = useAuth()
+  const { logIn, client } = useAuth()
+  const formMethods = useForm({ resolver: zodResolver(schema), mode: 'onBlur' })
   const [error, setError] = useState(null)
-  const onSubmit = (data) => {
+  const [message, setMessage] = useState(null)
+  const resetPasswordHandler = async (e) => {
+    e.preventDefault()
     setError(null)
-    logIn({ email: data.email, password: data.password })
-      .then(() => {
-        navigate(routes.dashboard())
-      })
-      .catch((error) => setError(error.message))
+    const email = formMethods.getValues('email')
+    const isValidEmail = (input) => /^\S+@\S+$/.test(input)
+    if (!isValidEmail(email)) {
+      setError('Please enter a valid email')
+      return
+    }
+    const { error } = await client.auth.api.resetPasswordForEmail(email)
+    if (error) {
+      setError(error.message)
+    } else {
+      setMessage('Password reset link sent to your email')
+    }
+  }
+  const onSubmit = async (data) => {
+    setError(null)
+    const { user, error } = (await logIn({
+      email: data.email,
+      password: data.password,
+    })) as any
+    if (error) {
+      setError(error.message)
+      return
+    }
+
+    if (user) {
+      navigate(routes.dashboard())
+    }
   }
   //const formMethods = useForm({ resolver: zodResolver(schema) })
 
@@ -44,18 +71,13 @@ const LoginPage = () => {
         <Form
           onSubmit={onSubmit}
           className="mt-8 space-y-6"
-          validation={{ mode: 'onBlur', resolver: zodResolver(schema) }}
+          formMethods={formMethods}
         >
-          {error && (
-            <p className="text-red-500 text-sm text-center">
-              User name or password incorrect
-            </p>
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          {message && (
+            <p className="text-yellow-500 text-sm text-center">{message}</p>
           )}
-          {/* <FormError
-            error={error}
-            titleClassName="font-semibold"
-            wrapperClassName="bg-red-100 text-red-900 text-sm p-3 rounded"
-          /> */}
+
           <input type="hidden" name="remember" defaultValue="true" />
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
@@ -94,28 +116,6 @@ const LoginPage = () => {
               />
             </div>
           </div>
-
-          <div className="flex items-center justify-end">
-            {/* <div className="flex items-center">
-              <input
-                id="remember_me"
-                name="remember_me"
-                type="checkbox"
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label
-                htmlFor="remember_me"
-                className="ml-2 block text-sm text-gray-900"
-              >
-                Remember me
-              </label>
-            </div> */}
-
-            <div className="text-sm">
-              <Link to="/">Forgot Password</Link>
-            </div>
-          </div>
-
           <div>
             <button
               type="submit"
@@ -129,6 +129,20 @@ const LoginPage = () => {
               </span>
               Sign in
             </button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-grey-500">
+              <span>No account yet?</span>{' '}
+              <Link to={routes.home()} className="text-blue-500">
+                {' '}
+                Sign up
+              </Link>
+            </div>
+            <div className="text-sm text-grey-500">
+              <button onClick={resetPasswordHandler} className="text-blue-900">
+                Forgot Password?
+              </button>
+            </div>
           </div>
         </Form>
       </div>
