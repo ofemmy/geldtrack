@@ -24,6 +24,7 @@ const Routes = () => {
           <Route path="/expenses" page={ExpensesPage} name="expenses" />
           <Route path="/recurrings" page={RecurringsPage} name="recurrings" />
           <Route path="/budget" page={BudgetPage} name="budget" />
+          <Route path="/password-reset" page={PasswordResetPage} name="passwordReset" />
         </Set>
       </Private>
       <Route notfound page={NotFoundPage} />

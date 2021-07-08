@@ -1,4 +1,5 @@
 import { NavLink, routes } from '@redwoodjs/router'
+
 import { upperFirst } from 'lodash'
 import Pageheader from 'src/components/Pageheader/Pageheader'
 import Flex from 'src/components/Flex/Flex'
@@ -27,9 +28,13 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                 <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
                   <nav className="flex-1 px-2 space-y-1">
                     {navigation.map((item) =>
-                      !['home', 'newEntry', 'login', 'verify'].includes(
-                        item
-                      ) ? (
+                      ![
+                        'home',
+                        'newEntry',
+                        'login',
+                        'verify',
+                        'passwordReset',
+                      ].includes(item) ? (
                         <NavLink
                           to={routes[item]()}
                           key={item}

@@ -7,7 +7,7 @@ import { useDate } from 'src/utils/hooks/useDate'
 import MonthPicker from 'src/components/MonthPicker/MonthPicker'
 const DashboardPage = () => {
   const { currentUser } = useAuth()
-  console.log(currentUser)
+
   const { currentMonth } = useDate()
   return (
     <div className="space-y-6">
