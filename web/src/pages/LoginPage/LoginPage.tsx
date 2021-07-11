@@ -85,7 +85,11 @@ const LoginPage = () => {
           className="mt-8 space-y-6"
           formMethods={formMethods}
         >
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          {error && (
+            <p className="text-red-500 text-sm text-center p-3 bg-red-200">
+              {error}
+            </p>
+          )}
           {message && (
             <p className="text-yellow-900 text-sm text-center p-3 bg-yellow-200">
               {message}

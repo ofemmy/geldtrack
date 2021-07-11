@@ -102,6 +102,7 @@ const ResetPasswordForm = ({ accessToken }) => {
                 <Spinner />
               </span>
             )}
+            {resetLoading ? 'Reseting Password....' : 'Reset Password'}
           </Submit>
         </div>
       </div>
