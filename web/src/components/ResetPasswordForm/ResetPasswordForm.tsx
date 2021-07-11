@@ -8,6 +8,7 @@ import {
   PasswordField,
 } from '@redwoodjs/forms'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Spinner } from '@chakra-ui/react'
 import { z } from 'zod'
 import { useAuth } from '@redwoodjs/auth'
 import { navigate, routes } from '@redwoodjs/router'
@@ -25,15 +26,21 @@ const schema = z
 
 const ResetPasswordForm = ({ accessToken }) => {
   const [error, setError] = useState(null)
+  const [resetLoading, setResetLoading] = useState(false)
   const { client } = useAuth()
   const onSubmit = async (inputData) => {
     if (!accessToken) return
+    setResetLoading(true)
     const newPassword = inputData.resetPassword
     const { error, data } = await client.auth.api.updateUser(accessToken, {
       password: newPassword,
     })
-    if (error) setError(error.message)
+    if (error) {
+      setError(error.message)
+      setResetLoading(false)
+    }
     if (data) {
+      setResetLoading(false)
       navigate(routes.dashboard())
     }
   }
@@ -86,8 +93,15 @@ const ResetPasswordForm = ({ accessToken }) => {
           </div>
         </div>
         <div>
-          <Submit className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            Reset Password
+          <Submit
+            disabled={resetLoading}
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            {resetLoading && (
+              <span className="mr-4">
+                <Spinner />
+              </span>
+            )}
           </Submit>
         </div>
       </div>

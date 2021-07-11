@@ -8,7 +8,7 @@ import {
   Submit,
   FormError,
 } from '@redwoodjs/forms'
-import { useDisclosure } from '@chakra-ui/hooks'
+import { useDisclosure, Spinner } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useAuth } from '@redwoodjs/auth'
@@ -289,9 +289,20 @@ const RecurringEntryForm = ({ mode = 'create', entry = null }) => {
           <div className="flex justify-end">
             <Submit
               disabled={loading || updateLoading}
-              className="flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              {mode === 'create' ? 'Create Entry' : 'Update Entry'}
+              {(loading || updateLoading) && (
+                <span className="mr-4">
+                  <Spinner />
+                </span>
+              )}
+              {mode === 'create'
+                ? loading
+                  ? 'Creating Entry...'
+                  : 'Create Entry'
+                : updateLoading
+                ? 'Updating Entry...'
+                : 'Update Entry'}
             </Submit>
           </div>
         </div>
