@@ -9,7 +9,8 @@ import {
   FormError,
 } from '@redwoodjs/forms'
 import { useForm } from 'react-hook-form'
-import { toast, Toaster } from '@redwoodjs/web/toast'
+import { Spinner } from '@chakra-ui/react'
+import { toast } from '@redwoodjs/web/toast'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@redwoodjs/web'
@@ -18,7 +19,7 @@ import Button from 'src/components/Button/Button'
 import { CREATE_BUDGET, UPDATE_BUDGET } from 'src/utils/graphql'
 const budgetSchema = z
   .object({
-    category: z.string().nonempty('Name cannot be empty'),
+    category: z.string().nonempty('Category must have a name'),
     monthlyBudget: z
       .string()
       .nonempty('Invalid amount')
@@ -66,11 +67,11 @@ const BudgetForm = ({
   }
   const formMethods = useForm({
     resolver: zodResolver(budgetSchema),
+    mode: 'onBlur',
     defaultValues: initialValues,
   })
   return (
     <>
-      <Toaster />
       <Form onSubmit={submitHandler} formMethods={formMethods}>
         <FormError error={error || updateError} />
         <div className="space-y-6">
@@ -93,6 +94,7 @@ const BudgetForm = ({
                 ))}
               </SelectField>
             </div>
+            <FieldError name="category" className="mt-2 text-sm text-red-600" />
           </div>
           <div>
             <Label
@@ -142,7 +144,18 @@ const BudgetForm = ({
               disabled={loading || updateLoading}
               className="flex justify-center py-1.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-50"
             >
-              {formMode === 'create' ? 'Save' : 'Update'}
+              {(loading || updateLoading) && (
+                <span className="mr-4">
+                  <Spinner />
+                </span>
+              )}
+              {formMode === 'create'
+                ? loading
+                  ? 'Creating Budget...'
+                  : 'Create Budget'
+                : updateLoading
+                ? 'Updating Budget...'
+                : 'Update Budget'}
             </Submit>
             <Button onClick={onClose}>Cancel</Button>
           </div>

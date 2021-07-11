@@ -8,20 +8,24 @@ import {
   FormError,
 } from '@redwoodjs/forms'
 import { useForm } from 'react-hook-form'
-import { toast, Toaster } from '@redwoodjs/web/toast'
+import { toast } from '@redwoodjs/web/toast'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@redwoodjs/web'
 import Button from 'src/components/Button/Button'
 import { CREATE_CATEGORY } from '../../utils/graphql'
+import { Spinner } from '@chakra-ui/react'
 const categorySchema = z
   .object({
-    name: z.string().nonempty('Name cannot be empty'),
+    name: z.string().nonempty('Category must have a name'),
     type: z.string().nonempty('No entry type chosen'),
   })
   .optional()
 const CategoryForm = ({ onClose, userId, refetchOnQueryComplete }) => {
-  const formMethods = useForm()
+  const formMethods = useForm({
+    resolver: zodResolver(categorySchema),
+    mode: 'onBlur',
+  })
   const [create, { loading, error }] = useMutation(CREATE_CATEGORY, {
     onCompleted: () => {
       toast.success('New Category Created')
@@ -35,12 +39,7 @@ const CategoryForm = ({ onClose, userId, refetchOnQueryComplete }) => {
   }
   return (
     <>
-      <Toaster />
-      <Form
-        onSubmit={submitHandler}
-        validation={{ resolver: zodResolver(categorySchema) }}
-        formMethods={formMethods}
-      >
+      <Form onSubmit={submitHandler} formMethods={formMethods}>
         <FormError error={error} />
         <div className="space-y-6">
           <div>
@@ -82,7 +81,12 @@ const CategoryForm = ({ onClose, userId, refetchOnQueryComplete }) => {
               disabled={loading}
               className="flex justify-center py-1.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-50"
             >
-              Save
+              {loading && (
+                <span className="mr-4">
+                  <Spinner />
+                </span>
+              )}
+              {loading ? 'Saving...' : 'Save'}
             </Submit>
             <Button onClick={onClose}>Cancel</Button>
           </div>
