@@ -2,6 +2,7 @@ import { ColorModeScript } from '@chakra-ui/color-mode'
 import ReactDOM from 'react-dom'
 import theme from 'src/theme'
 import App from './App'
+import { Toaster } from 'react-hot-toast'
 /**
  * When `#redwood-app` isn't empty then it's very likely that you're using
  * prerendering. So React attaches event listeners to the existing markup
@@ -11,6 +12,7 @@ import App from './App'
 const CustomApp = (
   <>
     <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+    <Toaster />
     <App />
   </>
 )

@@ -13,7 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useAuth } from '@redwoodjs/auth'
 import { useForm } from 'react-hook-form'
-import { toast, Toaster } from '@redwoodjs/web/toast'
+import { toast } from '@redwoodjs/web/toast'
 import { useMutation, useQuery } from '@redwoodjs/web'
 import getSymbolFromCurrency from 'currency-symbol-map'
 import { convertToLuxonDate, extractCategories } from 'src/utils/UtilFunctions'
@@ -125,7 +125,6 @@ const RecurringEntryForm = ({ mode = 'create', entry = null }) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
   return (
     <>
-      <Toaster />
       <CategoryModal
         isOpen={isOpen}
         onClose={onClose}

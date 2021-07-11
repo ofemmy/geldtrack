@@ -12,6 +12,8 @@ import { useAuth } from '@redwoodjs/auth'
 import { LockClosedIcon } from '@heroicons/react/solid'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { cx } from '../../utils/UtilFunctions'
+import { Spinner } from '@chakra-ui/react'
 
 const schema = z.object({
   email: z.string().email('Invalid email'),
@@ -22,6 +24,7 @@ const LoginPage = () => {
   const formMethods = useForm({ resolver: zodResolver(schema), mode: 'onBlur' })
   const [error, setError] = useState(null)
   const [message, setMessage] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
   const resetPasswordHandler = async (e) => {
     e.preventDefault()
     setError(null)
@@ -31,11 +34,15 @@ const LoginPage = () => {
       setError('Please enter a valid email')
       return
     }
+    setIsLoading(true)
     const { error } = await client.auth.api.resetPasswordForEmail(email)
+
     if (error) {
       setError(error.message)
+      setIsLoading(false)
     } else {
       setMessage('Password reset link sent to your email')
+      setIsLoading(false)
     }
   }
   const onSubmit = async (data) => {
@@ -139,9 +146,20 @@ const LoginPage = () => {
               </Link>
             </div>
             <div className="text-sm text-grey-500">
-              <button onClick={resetPasswordHandler} className="text-blue-900">
-                Forgot Password?
-              </button>
+              {isLoading ? (
+                <div className="flex space-x-2 items-center justify-center">
+                  <Spinner />
+                  <span className="text-blue-500">Sending Email</span>
+                </div>
+              ) : (
+                <button
+                  onClick={resetPasswordHandler}
+                  className={cx(isLoading ? 'text-gray-300' : 'text-blue-900')}
+                  disabled={isLoading}
+                >
+                  Forgot Password?
+                </button>
+              )}
             </div>
           </div>
         </Form>

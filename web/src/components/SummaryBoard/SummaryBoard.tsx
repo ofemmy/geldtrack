@@ -1,4 +1,8 @@
-import { CreditCardIcon, LibraryIcon } from '@heroicons/react/outline'
+import {
+  CreditCardIcon,
+  LibraryIcon,
+  ScaleIcon,
+} from '@heroicons/react/outline'
 import { useAuth } from '@redwoodjs/auth'
 import { Link, routes } from '@redwoodjs/router'
 import { numberToCurrency } from 'src/utils/UtilFunctions'
@@ -62,6 +66,32 @@ const SummaryBoard = ({ totalEntryData }) => {
               View all
             </Link>
           </div>
+        </div>
+        <div className="flex bg-yellow-100 text-yellow-500 lg:w-1/2 p-5">
+          <div className="flex-shrink-0">
+            <ScaleIcon className="h-6 w-6" />
+          </div>
+          <div className="ml-5 w-0 flex-1">
+            <dl>
+              <dt className="text-sm font-medium text-yellow-500 truncate">
+                Balance
+              </dt>
+              <dd className="text-lg font-medium text-yellow-500">
+                {numberToCurrency({
+                  amount: totalIncome - totalExpense,
+                  currency: currentUser.profile.currency,
+                })}
+              </dd>
+            </dl>
+          </div>
+          {/* <div>
+            <Link
+              to={routes.incomes()}
+              className="uppercase text-xs p-2 bg-green-200 rounded-sm hover:text-white hover:bg-green-300"
+            >
+              View all
+            </Link>
+          </div> */}
         </div>
       </div>
     </div>

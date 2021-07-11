@@ -11,7 +11,7 @@ import {
 } from '@redwoodjs/forms'
 
 import { useDisclosure } from '@chakra-ui/react'
-import { toast, Toaster } from '@redwoodjs/web/toast'
+import { toast } from '@redwoodjs/web/toast'
 import { useMutation, useQuery } from '@redwoodjs/web'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -145,7 +145,7 @@ const NonRecurringEntryForm = ({ mode = 'create', entry = null }) => {
   const { isOpen, onClose, onOpen } = useDisclosure()
   return (
     <>
-      <Toaster />
+      {/* <Toaster /> */}
       <CategoryModal
         isOpen={isOpen}
         onClose={onClose}

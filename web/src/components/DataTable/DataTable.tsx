@@ -6,7 +6,7 @@ import { cx, numberToCurrency } from 'src/utils/UtilFunctions'
 import { PencilAltIcon, TrashIcon, CashIcon } from '@heroicons/react/outline'
 import { DateTime } from 'luxon'
 import AppModal from '../AppModal/AppModal'
-import { toast, Toaster } from '@redwoodjs/web/toast'
+import { toast } from '@redwoodjs/web/toast'
 import NonRecurringEntryForm from 'src/components/NonRecurringEntryForm/NonRecurringEntryForm'
 import RecurringEntryForm from 'src/components/RecurringEntryForm/RecurringEntryForm'
 import { useMutation } from '@redwoodjs/web'
@@ -101,7 +101,6 @@ const DataTable = ({ data, dataPerPage = 10, currency = 'EUR', userId }) => {
   }
   return (
     <>
-      <Toaster />
       <AppModal onClose={onClose} isOpen={isOpen} title="Edit Entry">
         {formType === EntryFrequency.NonRecurring ? (
           <NonRecurringEntryForm mode="edit" entry={entryToEdit} />
