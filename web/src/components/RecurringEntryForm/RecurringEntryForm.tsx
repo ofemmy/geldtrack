@@ -137,7 +137,7 @@ const RecurringEntryForm = ({ mode = 'create', entry = null }) => {
           <div>
             <div className="space-x-4 flex">
               <div className="space-x-2">
-                <RadioField name="type" value=" Income" id="Income" />
+                <RadioField name="type" value="Income" id="Income" />
                 <Label className="text-md font-medium text-blue-900">
                   Income
                 </Label>
